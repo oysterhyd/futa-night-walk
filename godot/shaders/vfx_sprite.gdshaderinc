@@ -4,8 +4,10 @@ uniform sampler2D noise_tex : repeat_enable, filter_linear;
 uniform float grid = 8.0;
 varying vec4 custom;
 varying vec2 local_uv;
+varying vec4 instance_modulate;
 void vertex() {
 	custom = INSTANCE_CUSTOM;
+	instance_modulate = COLOR;
 	local_uv = UV;
 	float cell = floor(custom.x + 0.5);
 	vec2 origin = vec2(mod(cell, grid), floor(cell / grid));
@@ -19,7 +21,7 @@ void fragment() {
 		float field = n * 0.75 + tex.a * 0.35;
 		alpha *= smoothstep(custom.y * 1.1 - 0.05, custom.y * 1.1 + 0.12, field);
 	}
-	vec3 rgb = tex.rgb * COLOR.rgb;
+	vec3 rgb = tex.rgb * instance_modulate.rgb;
 	rgb = mix(rgb, vec3(1.0), clamp(custom.w * tex.a * tex.a, 0.0, 1.0));
-	COLOR = vec4(rgb, alpha * COLOR.a);
+	COLOR = vec4(rgb, alpha * instance_modulate.a);
 }

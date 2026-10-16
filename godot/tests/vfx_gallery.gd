@@ -11,6 +11,7 @@ var out = "res://test-output/vfx/"
 const DT = 1.0/30.0
 
 func _ready() -> void:
+	get_viewport().gui_disable_input=true
 	video = "--video" in OS.get_cmdline_user_args()
 	for arg in OS.get_cmdline_user_args(): if arg.begins_with("--only="): only = arg.substr(7)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(out))
@@ -23,6 +24,10 @@ func setup(character: String) -> void:
 	await get_tree().process_frame
 	app.set_process(false); app.set_physics_process(false)
 	app.start_run({"seed":777,"choose_oath":false,"character":character})
+	# The gallery advances the world itself; ignore desktop focus/input changes.
+	app.paused=true
+	app.set_process_unhandled_input(false)
+	app.clear_control(app.modal)
 	app.intro_stage=1
 	w=app.world
 	for c in app.page.get_children(): if c is StoryView.ChapterCard: c.queue_free()

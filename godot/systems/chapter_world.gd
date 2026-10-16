@@ -532,13 +532,13 @@ func hit(mob: Dictionary, amount: float, source: String, knockback: float = 0, c
 	if sigils.get("ward",0)>0 and (mob.stun>0 or mob.slow>0): shield=minf(30,shield+5*sigils.ward)
 	if oath=="script" and kills%45==0: rerolls+=1
 	if rng.randf()<0.25 or mob.elite: drops.append({"x":mob.x,"y":mob.y,"value":7 if mob.elite else 2,"kind":"coin","age":0.0})
-	emit("death",{"x":mob.x,"y":mob.y,"source":source,"boss":mob.boss,"elite":mob.get("elite",false),"kind":mob.kind})
+	emit("death",{"x":mob.x,"y":mob.y,"source":source,"boss":mob.boss,"elite":mob.get("elite",false),"enemy_kind":mob.kind})
 	if mob.get("pillar",false):
 		for boss in mobs.filter(func(other): return other.hp>0 and other.boss): hit(boss,95,"pulse")
 	if mob.boss:
 		bosses+=1; nohit=sector_damage==0
 		for other in mobs:
-			if other.hp>0: other.hp=0; emit("death",{"x":other.x,"y":other.y,"source":source,"boss":false,"kind":other.kind})
+			if other.hp>0: other.hp=0; emit("death",{"x":other.x,"y":other.y,"source":source,"boss":false,"enemy_kind":other.kind})
 		room().cleared=true; room().claimed=true
 		coins+=45
 		_collect_all()

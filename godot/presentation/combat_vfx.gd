@@ -269,7 +269,7 @@ func hit(event: Dictionary, p: Vector2) -> void:
 			if hits_this_frame <= 4: decal(["ink_a","ink_b"][rng.randi_range(0,1)],p+Vector2(rng.randf_range(-12,12),4),46,Color(0.06,0.07,0.08,0.45),1.2)
 
 func death(event: Dictionary, p: Vector2) -> void:
-	var kind: String = event.get("kind","")
+	var kind: String = event.get("enemy_kind","")
 	var boss: bool = event.get("boss",false)
 	var elite: bool = event.get("elite",false)
 	var scale = 2.4 if boss else (1.4 if elite else 1.0)
@@ -549,9 +549,11 @@ func _bolts(world, dt: float) -> void:
 		var a = v.angle()
 		if bolt.hostile:
 			hostile_count += 1
-			if hostile_count <= 420:
+			# CombatBatch always draws every hostile core and danger trail.
+			# Bound only the extra glow/debris work in dense projectile fields.
+			if hostile_count <= 128:
 				air.once("glow",q,0,Vector2.ONE*40,Color(1.0,0.3,0.15,0.55),true)
-				if hostile_count <= 160:
+				if hostile_count <= 64:
 					air.once("streak",q-v.normalized()*14,a,Vector2(52,14),Color(1.0,0.4,0.2,0.6),true,0.4)
 					air.once("glow",q,0,Vector2.ONE*14,Color(0.25,0.03,0.02,0.9),false)
 			continue

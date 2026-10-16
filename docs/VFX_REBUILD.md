@@ -6,7 +6,7 @@
 
 - **三层叠画**：每个效果由墨层（正常混合，在纸白地面上保持轮廓）、光层（叠加混合）与白热核心组成，再加碎屑、余烬、烟雾和地面残痕。
 - **素材**：Kenney Particle Pack（CC0）提供光晕、火焰、烟雾、电弧等基础贴图；符纸、桃花瓣、冰棱、锁链、墨溅以及镇魂印、缚地阵、燃灯日轮、霜环四张法阵由 `tools/make_vfx_textures.py` 程序生成。来源与许可见 [素材记录](../godot/assets/ART_RECORD.md)。
-- **渲染**：`presentation/vfx_layer.gd` 把所有粒子按混合方式合并为六个 `MultiMesh` 批次；刀光、冲击波与符环由 `shaders/vfx_arc_*.gdshader` 程序化绘制。地面层在角色之下，空中层在角色之上、伤害数字之下。
+- **渲染**：`presentation/vfx_layer.gd` 把所有粒子按混合方式合并为每层六个 `MultiMesh` 批次（地面与空中合计最多十二批）；刀光、冲击波与符环由 `shaders/vfx_arc_*.gdshader` 程序化绘制。地面层在角色之下，空中层在角色之上、伤害数字之下。
 - **消散**：怪物死亡改为「纸张燃尽」式消散，柔和噪声边缘带余烬描边，并飘起纸灰。
 
 ## 效果一览
@@ -35,3 +35,6 @@ godot --path godot res://tests/vfx_gallery.tscn                 # 关键帧
 godot --path godot res://tests/vfx_gallery.tscn -- --only=sword # 只截某一类
 godot --path godot res://tests/vfx_gallery.tscn -- --video      # 逐帧输出，可用 ffmpeg 合成预览
 ```
+
+
+Windows 发行版本为 3.1.1，审查修复与实机验证见 [Windows 验收记录](VFX_RELEASE_QA.md)。
