@@ -239,7 +239,7 @@ func show_menu() -> void:
 		var item = UI.button(page,entry[0],Rect2(96,y,360,54),entry[1],false,"menu")
 		if entry[0]=="继续对局": item.disabled = Save.read_run().is_empty()
 		y += 56
-	UI.label(page,"灯烬 %d    ·    已走过 %d 夜" % [Save.profile.embers,Save.profile.settled.size()],Rect2(100,830,650,30),17,UI.MUTED)
+	UI.label(page,"灯烬 %d    ·    已夜行 %d 次" % [Save.profile.embers,Save.profile.settled.size()],Rect2(100,830,650,30),17,UI.MUTED)
 	var version = UI.label(page,"v"+str(ProjectSettings.get_setting("application/config/version","")),Rect2(1380,846,190,26),15,Color(UI.MUTED,0.6))
 	version.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	UI.stagger(page,0,0.05,0.05)
