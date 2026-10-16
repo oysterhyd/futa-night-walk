@@ -2,7 +2,9 @@ class_name ChapterWorld
 extends RunWorld
 
 const C = preload("res://content/chapter_content.gd")
-const CHAPTER_KEYS = ["rooms","room_id","room_bounds","decorations","gear","skill","gear_rank","skill_rank","gear_mod","skill_mod","sigils","attributes","skill_cd","attack_cd","attack_buffer","attack_count","attack_windup","attack_aim","aim","dash_charges","dash_recharge","counter_time","echo_ready","coin_ready","shield","shadow_time","wind_time","wind_stacks","proc_timers","wave_index","wave_count","room_age","clear_delay","offer_kind","offer_title","offer_subtitle","shop_bought","event_id","shrine_started","shrine_round","extra_elite","curse_damage","pending_sigil","pending_relic"]
+const CHAPTER_KEYS = ["rooms","room_id","room_bounds","decorations","gear","skill","gear_rank","skill_rank","gear_mod","skill_mod","sigils","attributes","skill_cd","attack_cd","attack_buffer","attack_count","attack_windup","attack_aim","aim","dash_charges","dash_recharge","counter_time","echo_ready","coin_ready","shield","shadow_time","wind_time","wind_stacks","proc_timers","wave_index","wave_count","room_age","clear_delay","offer_kind","offer_title","offer_subtitle","shop_bought","event_id","shrine_started","shrine_round","extra_elite","curse_damage","pending_sigil","pending_relic","flame","ignite_time","ignite_tick","dodge_window","perfect_time","perfect_count"]
+const NEW_DEFAULTS = {"flame":0.0,"ignite_time":0.0,"ignite_tick":0.0,"dodge_window":0.0,"perfect_time":0.0,"perfect_count":0}
+const FLAME_MAX = 100.0
 var rooms: Array = []
 var room_id = 0
 var room_bounds = Rect2(120,180,1360,590)
@@ -48,6 +50,12 @@ var extra_elite = false
 var curse_damage = false
 var pending_sigil = ""
 var pending_relic = ""
+var flame = 0.0
+var ignite_time = 0.0
+var ignite_tick = 0.0
+var dodge_window = 0.0
+var perfect_time = 0.0
+var perfect_count = 0
 
 func begin(options: Dictionary = {}) -> void:
 	character = options.get("character","keeper")
@@ -175,11 +183,84 @@ func calculate_stats() -> Dictionary:
 	var damage = 1.0 + attributes.get("power",0)*0.1 + mini(int(camp.get("focus",0)),8)*0.02
 	if contract == "fragile": damage *= 1.25
 	if "red_thread" in relics and not player.is_empty() and player.hp < player.max_hp*0.5: damage *= 1.3
-	return {"damage":damage,"haste":minf(0.4,attributes.get("haste",0)*0.08),"attack_speed":minf(0.65,attributes.get("speed",0)*0.08),"speed":1.0+mini(int(camp.get("stride",0)),8)*0.015+(0.08 if "map" in relics else 0)+sigils.get("wind",0)*0.08*wind_stacks,"crit":minf(0.65,0.05+sigils.get("precision",0)*0.08),"magnet":1.0,"armor":0.0,"burn":1.6 if character=="alchemist" else 1.0,"xp":1.0,"regen":0.0,"dash":0.25 if character=="swordswoman" else 0.0,"pulse":1.15 if "drum" in relics else 1.0}
+	if ignite_time>0 and character=="keeper": damage *= 1.25
+	var attack_speed = minf(0.65,attributes.get("speed",0)*0.08)+(0.5 if ignite_time>0 and character=="swordswoman" else 0.0)
+	var burn = (1.6 if character=="alchemist" else 1.0)*(1.2 if school_tier("yan")>=1 else 1.0)*(1.5 if ignite_time>0 and character=="alchemist" else 1.0)
+	var crit = minf(0.75,0.05+sigils.get("precision",0)*0.08+(0.1 if school_tier("feng")>=1 else 0.0))
+	return {"damage":damage,"haste":minf(0.4,attributes.get("haste",0)*0.08),"attack_speed":attack_speed,"speed":1.0+mini(int(camp.get("stride",0)),8)*0.015+(0.08 if "map" in relics else 0)+sigils.get("wind",0)*0.08*wind_stacks,"crit":crit,"magnet":1.0,"armor":0.0,"burn":burn,"xp":1.0,"regen":0.0,"dash":0.25 if character=="swordswoman" else 0.0,"pulse":1.15 if "drum" in relics else 1.0}
 
 func stat(key: String) -> float:
 	var value=float((step_stats if inside_step else calculate_stats())[key])
 	return value*(1+sigils.get("focus",0)*0.08) if key=="pulse" else value
+
+func school_count(school: String) -> int:
+	var count = 0
+	for key in sigils:
+		if C.SIGILS.has(key) and C.SIGILS[key].get("school","")==school: count += 1
+	return count
+
+func school_tier(school: String) -> int:
+	var count = school_count(school)
+	return 2 if count>=4 else (1 if count>=2 else 0)
+
+func dash_max() -> int:
+	return 3 if school_tier("you")>=1 else 2
+
+func crit_multiplier() -> float:
+	return 2.3 if school_tier("feng")>=2 else 1.8
+
+func _gain_flame(amount: float) -> void:
+	if ignite_time>0 or phase!="active": return
+	var before = flame
+	flame = minf(FLAME_MAX,flame+amount)
+	if before<FLAME_MAX and flame>=FLAME_MAX: emit("flame_ready",{"x":player.x,"y":player.y})
+
+func can_ignite() -> bool:
+	return phase=="active" and flame>=FLAME_MAX and player.hp>0 and ignite_time<=0
+
+func ignite() -> bool:
+	if not can_ignite(): return false
+	flame = 0
+	var p = pos(player)
+	var power = stat("damage")*(1.0+0.15*(skill_rank-1))
+	player.invulnerable = maxf(player.invulnerable,0.7)
+	player.cast = 0.4
+	match character:
+		"swordswoman":
+			var targets = near(p,640).filter(func(m): return m.hp>0 and not m.get("pillar",false))
+			targets.sort_custom(func(a,b): return pos(a).distance_squared_to(p)<pos(b).distance_squared_to(p))
+			var last = p
+			for mob in targets.slice(0,7):
+				emit("ignite_chain",{"x":last.x,"y":last.y,"tx":mob.x,"ty":mob.y})
+				last = pos(mob)
+				hit(mob,130*power,"ignite_blade",30,true)
+			if last != p:
+				set_pos(player,last+(p-last).normalized()*48)
+				move_entity(player,Vector2.ZERO)
+			ignite_time = 4.0
+		"alchemist":
+			for i in range(9):
+				var ring = 0.0 if i==0 else (150.0 if i<5 else 285.0)
+				var target = (p+Vector2.from_angle(i*TAU/4.0+(0.4 if i>=5 else 0.0))*ring).clamp(room_bounds.position+Vector2(50,50),room_bounds.end-Vector2(50,50))
+				make_zone(target,115,95*power,"ignite_furnace",0.3,0.25+i*0.1,false,true)
+			heal(15)
+			ignite_time = 5.0
+		_:
+			_area(p,360,140*power,"ignite_lamp",1.0)
+			bolts = bolts.filter(func(b): return not b.hostile or pos(b).distance_to(p)>360)
+			heal(10)
+			ignite_time = 8.0
+	ignite_tick = 0.0
+	emit("ignite",{"x":p.x,"y":p.y,"character":character,"radius":360.0})
+	return true
+
+func _perfect_dodge() -> void:
+	dodge_window = 0
+	perfect_time = 1.6
+	perfect_count += 1
+	player.invulnerable = maxf(player.invulnerable,0.45)
+	_gain_flame(25)
+	emit("perfect_dodge",{"x":player.x,"y":player.y})
 
 func dash(move: Vector2) -> bool:
 	if phase != "active" or dash_charges <= 0 or player.hp <= 0: return false
@@ -191,7 +272,15 @@ func dash(move: Vector2) -> bool:
 	player.dash_time = 0.2; player.invulnerable = maxf(player.invulnerable,0.22)
 	attack_windup = 0
 	counter_time = 2.0
-	emit("dash",{"x":player.x,"y":player.y})
+	dodge_window = 0.3
+	emit("dash",{"x":player.x,"y":player.y,"dx":move.x,"dy":move.y})
+	if school_tier("you")>=2:
+		var start = pos(player)
+		var finish = start+move*160*(1.2 if "reed_sandal" in relics else 1.0)
+		for mob in near((start+finish)*0.5,150):
+			if Geometry2D.get_closest_point_to_segment(pos(mob),start,finish).distance_to(pos(mob))<mob.radius+42:
+				hit(mob,28*stat("damage"),"wind_trail",30)
+		emit("wind_trail",{"x":start.x,"y":start.y,"tx":finish.x,"ty":finish.y})
 	return true
 
 func _dash_interval() -> float:
@@ -236,8 +325,11 @@ func _attack() -> void:
 	if echo_ready: amount *= 1.0+0.35*sigils.get("echo",0)
 	if coin_ready and "broken_coin" in relics: amount *= 1.25
 	counter_time = 0; echo_ready = false; coin_ready = false
-	var critical = rng.randf()<stat("crit")
-	if critical: amount *= 1.8
+	var perfect = perfect_time>0
+	var critical = perfect or rng.randf()<stat("crit")
+	if critical: amount *= crit_multiplier()
+	if perfect: amount *= 1.5; perfect_time = 0
+	if critical and school_tier("feng")>=2 and dash_charges<dash_max() and _proc("crit_dash",0.3): dash_recharge = maxf(0.05,dash_recharge-0.35)
 	var p = pos(player)
 	player.cast = 0.2
 	if gear in ["sword","hammer"]:
@@ -273,7 +365,7 @@ func _attack() -> void:
 		for i in range(count):
 			var offset = attack_aim.orthogonal()*(i-(count-1)*0.5)*70-attack_aim*35
 			_projectile(p+offset,attack_aim,amount*0.35*(1.0+0.2*(skill_rank-1))*stat("pulse"),"shadow_twin",1,false,false)
-	emit("attack_art",{"x":p.x,"y":p.y,"source":item.source,"gear":gear,"angle":attack_aim.angle(),"combo":attack_count%3,"critical":critical})
+	emit("attack_art",{"x":p.x,"y":p.y,"source":item.source,"gear":gear,"angle":attack_aim.angle(),"combo":attack_count%3,"critical":critical,"perfect":perfect})
 	emit("cast",{"x":p.x,"y":p.y,"source":item.source})
 
 func _projectile(p: Vector2, direction: Vector2, amount: float, source: String, pierce: int, critical: bool, primary: bool = true) -> void:
@@ -303,6 +395,7 @@ func _primary_hit(mob: Dictionary, amount: float, source: String, critical: bool
 	if mob.elite or mob.boss:
 		if "silver" in relics and _proc("silver",0.8): skill_cd=maxf(0,skill_cd-0.4)
 		if sigils.get("leech",0)>0 and _proc("leech",1.0): heal(sigils.leech)
+	_gain_flame(1.0 if mob.elite or mob.boss else 0.6)
 	hit(mob,amount,source,45 if gear in ["hammer","sword"] else 12,critical)
 
 func _proc(key: String, interval: float) -> bool:
@@ -313,8 +406,11 @@ func _proc(key: String, interval: float) -> bool:
 func pulse() -> bool:
 	if phase != "active" or skill_cd>0 or player.hp<=0: return false
 	var item = C.SKILLS[skill]
-	skill_cd = item.cooldown*(1.0-stat("haste"))
+	skill_cd = item.cooldown*(1.0-stat("haste"))*(0.9 if school_tier("zhen")>=1 else 1.0)
 	echo_ready = true
+	if school_tier("zhen")>=2:
+		shield = minf(30,shield+12)
+		_gain_flame(8)
 	player.cast = 0.32
 	var p = pos(player)
 	var target = (p+aim*260).clamp(room_bounds.position+Vector2(60,60),room_bounds.end-Vector2(60,60))
@@ -419,11 +515,24 @@ func hit(mob: Dictionary, amount: float, source: String, knockback: float = 0, c
 	emit("hit",{"x":mob.x,"y":mob.y,"amount":int(amount),"source":source,"critical":critical})
 	if mob.hp>0: return
 	kills+=1; combo+=1; combo_time=3.0
+	if not mob.boss and not mob.get("pillar",false): _gain_flame(10.0 if mob.elite else 3.0)
+	if school_tier("yan")>=2 and (mob.burn>0 or mob.poison>0) and not mob.boss:
+		for other in near(pos(mob),115):
+			if other.uid!=mob.uid and other.hp>0: hit(other,24*stat("damage"),"school_blast",20)
+		emit("ring",{"x":mob.x,"y":mob.y,"radius":115,"source":"school_blast"})
+	match mob.get("affix",""):
+		"split":
+			for i in range(3):
+				var child = super.spawn("paper_spirit")
+				if not child.is_empty():
+					set_pos(child,pos(mob)+Vector2.from_angle(i*TAU/3)*36)
+					child.hp*=0.6; child.max_hp=child.hp; child.damage*=0.65; child["vulnerable"]=0.0; child["melee_pending"]=false
+		"ember": make_zone(pos(mob),95,mob.damage*0.9,"enemy",0.45,1.6,true,true)
 	wind_time=4.0; wind_stacks=mini(3,wind_stacks+1)
 	if sigils.get("ward",0)>0 and (mob.stun>0 or mob.slow>0): shield=minf(30,shield+5*sigils.ward)
 	if oath=="script" and kills%45==0: rerolls+=1
 	if rng.randf()<0.25 or mob.elite: drops.append({"x":mob.x,"y":mob.y,"value":7 if mob.elite else 2,"kind":"coin","age":0.0})
-	emit("death",{"x":mob.x,"y":mob.y,"source":source,"boss":mob.boss})
+	emit("death",{"x":mob.x,"y":mob.y,"source":source,"boss":mob.boss,"elite":mob.get("elite",false)})
 	if mob.get("pillar",false):
 		for boss in mobs.filter(func(other): return other.hp>0 and other.boss): hit(boss,95,"pulse")
 	if mob.boss:
@@ -436,6 +545,7 @@ func hit(mob: Dictionary, amount: float, source: String, knockback: float = 0, c
 		finish(true)
 
 func hurt(amount: float) -> void:
+	if phase=="active" and dodge_window>0 and player.hp>0: _perfect_dodge(); return
 	if phase!="active" or player.invulnerable>0 or player.hp<=0: return
 	var absorbed = minf(shield,amount)
 	shield-=absorbed; amount-=absorbed
@@ -458,6 +568,11 @@ func spawn(kind: String, elite: bool = false, boss: bool = false) -> Dictionary:
 	mob.hp*=1.0+room().rank*0.07; mob.max_hp=mob.hp
 	mob.speed*=0.85; mob.damage*=0.65*(1.15 if curse_damage else 1.0)
 	mob["vulnerable"]=0.0; mob["melee_pending"]=false
+	if elite and not boss:
+		var affix = ["swift","armored","split","ember"][rng.randi_range(0,3)]
+		mob["affix"] = affix
+		if affix=="swift": mob.speed*=1.45
+		elif affix=="armored": mob.hp*=1.6; mob.max_hp=mob.hp
 	return mob
 
 func _spawn_wave() -> void:
@@ -610,12 +725,22 @@ func update_step(dt: float, move: Vector2, interact: bool) -> void:
 	for key in proc_timers: proc_timers[key]=maxf(0,proc_timers[key]-dt)
 	attack_cd=maxf(0,attack_cd-dt); attack_buffer=maxf(0,attack_buffer-dt); skill_cd=maxf(0,skill_cd-dt)
 	counter_time=maxf(0,counter_time-dt); shadow_time=maxf(0,shadow_time-dt)
+	dodge_window=maxf(0,dodge_window-dt); perfect_time=maxf(0,perfect_time-dt)
+	if ignite_time>0:
+		ignite_time=maxf(0,ignite_time-dt)
+		if character=="keeper":
+			ignite_tick-=dt
+			if ignite_tick<=0:
+				ignite_tick=0.5
+				for mob in near(pos(player),240):
+					apply_element(mob,"ignite_lamp",16*stat("damage"))
+					hit(mob,16*stat("damage"),"ignite_lamp")
 	wind_time=maxf(0,wind_time-dt); combo_time=maxf(0,combo_time-dt)
 	if wind_time==0: wind_stacks=0
 	if combo_time==0: combo=0
-	if dash_charges<2:
+	if dash_charges<dash_max():
 		dash_recharge-=dt
-		if dash_recharge<=0: dash_charges+=1; dash_recharge=_dash_interval() if dash_charges<2 else 0
+		if dash_recharge<=0: dash_charges+=1; dash_recharge=_dash_interval() if dash_charges<dash_max() else 0
 	player.dash_cd=0 if dash_charges>0 else dash_recharge
 	var speed=Content.data.characters[character].speed*stat("speed")
 	if player.dash_time>0:
@@ -706,6 +831,7 @@ func roll_choices() -> void:
 			candidates.append("p:"+key)
 			if _sigil_compatible(key): compatible.append("p:"+key); candidates.append("p:"+key)
 			if sigils.has(key): candidates.append("p:"+key)
+			if school_count(C.SIGILS[key].school)>0: candidates.append("p:"+key)
 	var pool: Array=["a:"+C.ATTRIBUTES.keys()[rng.randi_range(0,3)]]
 	if not compatible.is_empty(): pool.append(compatible[rng.randi_range(0,compatible.size()-1)])
 	for token in _shuffle(candidates):
@@ -859,7 +985,7 @@ func chapter_choice_info(token: String) -> Dictionary:
 		"g": item=C.GEAR[key]; tag="装备 · 替换 "+C.GEAR[gear].name; note=" / ".join(item.tags)
 		"s": item=C.SKILLS[key]; tag="技能 · 替换 "+C.SKILLS[skill].name; note=" / ".join(item.tags)
 		"a": item=C.ATTRIBUTES[key]; tag="基础属性 · 本局生效"
-		"p": item=C.SIGILS[key]; tag="符印 · %d → %d 级" % [sigils.get(key,0),sigils.get(key,0)+1 if sigils.has(key) else (2 if "inkstone" in relics else 1)]; note=" / ".join(item.tags)+(" · 当前可触发" if _sigil_compatible(key) else " · 当前缺少搭配")
+		"p": item=C.SIGILS[key]; tag=C.SCHOOLS[item.school].name+" · %d → %d 级" % [sigils.get(key,0),sigils.get(key,0)+1 if sigils.has(key) else (2 if "inkstone" in relics else 1)]; note=_school_note(key)
 		"r": item=C.RELICS[key]; tag="遗物 · %d / 6" % relics.size()
 		"drop_sigil": item=C.SIGILS[key]; tag="移除此符印"
 		"drop_relic": item=C.RELICS[key]; tag="移除此遗物"
@@ -871,13 +997,24 @@ func chapter_choice_info(token: String) -> Dictionary:
 		"rest": item={"name":"喝茶疗伤" if key=="heal" else "磨砺装备","glyph":"茶","desc":"回复 50% 最大生命。" if key=="heal" else "装备升一阶；二阶可选择攻击改造。"}; tag="休整 · 只能选一项"
 		"coin": item={"name":"折算铜钱","glyph":"钱","desc":"获得 %s 铜钱，保留当前遗物。" % key}; tag="补给"
 	if not can_choose(token): note=unavailable_reason(token)
-	return {"name":item.name,"desc":item.desc,"glyph":item.glyph,"tag":tag,"note":note,"color":color}
+	return {"name":item.name,"desc":item.desc,"glyph":item.glyph,"tag":tag,"note":note,"color":color,"school":item.get("school","") if kind in ["p","drop_sigil"] else ""}
+
+func _school_note(key: String) -> String:
+	var school=C.SIGILS[key].school
+	var have=school_count(school)
+	var next=have+(0 if sigils.has(key) else 1)
+	var info=C.SCHOOLS[school]
+	var text=info.name+" %d / 4" % mini(4,next)
+	if not sigils.has(key) and (next==2 or next==4): text+=" · 激活："+(info.tier1 if next==2 else info.tier2)
+	elif not _sigil_compatible(key): text+=" · 当前缺少搭配"
+	return text
 
 func result() -> Dictionary:
 	var output=super.result()
 	output["ruleset"]="chapter_one"; output["gear"]=gear; output["skill"]=skill; output["gear_rank"]=gear_rank; output["skill_rank"]=skill_rank; output["gear_mod"]=gear_mod; output["skill_mod"]=skill_mod; output["sigils"]=sigils.duplicate(); output["rooms_cleared"]=rooms.filter(func(r): return r.cleared and r.visited).size()
 	output["reward"]=int((8+kills/18+bosses*20+(15 if victory else 0))*Content.data.contracts[contract].bonus)
 	output["attributes"]=attributes.duplicate()
+	output["perfect"]=perfect_count
 	return output
 
 func snapshot() -> Dictionary:
@@ -890,6 +1027,9 @@ func snapshot() -> Dictionary:
 
 func valid_snapshot(raw: Dictionary) -> bool:
 	if raw.get("version")!=5 or raw.get("ruleset")!="chapter_one": return false
+	for key in NEW_DEFAULTS:
+		if not raw.has(key): raw[key]=NEW_DEFAULTS[key]
+	if not numeric(raw.flame,0,FLAME_MAX) or not numeric(raw.ignite_time,0,10) or not numeric(raw.dodge_window,0,1) or not numeric(raw.perfect_time,0,3) or not numeric(raw.perfect_count,0,100000,true): return false
 	for key in SNAPSHOT_KEYS+CHAPTER_KEYS+["oath","pending_relics","relic_return_phase","pending_replacement"]:
 		if not raw.has(key): return false
 		if typeof(raw[key])!=typeof(get(key)) and not (numeric(raw[key]) and numeric(get(key))): return false
@@ -945,7 +1085,7 @@ func valid_snapshot(raw: Dictionary) -> bool:
 	for value in [raw.aim,raw.attack_aim]:
 		if not value.is_finite() or absf(value.length_squared()-1)>0.1: return false
 	for key in raw.proc_timers:
-		if key not in ["interact","ember","silver","leech","wheel","beads"] or not numeric(raw.proc_timers[key],0,3): return false
+		if key not in ["interact","ember","silver","leech","wheel","beads","crit_dash"] or not numeric(raw.proc_timers[key],0,3): return false
 	for key in raw.shop_bought:
 		if key not in ["shop:heal","shop:gear","shop:skill","shop:relic"]: return false
 	for prop in raw.decorations:
@@ -979,7 +1119,7 @@ func valid_snapshot(raw: Dictionary) -> bool:
 				if not numeric(int(key),0,limit,true): return false
 			"o": pass
 			_: return false
-	if not numeric(raw.dash_charges,0,2,true) or not numeric(raw.shield,0,30): return false
+	if not numeric(raw.dash_charges,0,3,true) or not numeric(raw.shield,0,30): return false
 	if not numeric(raw.wind_stacks,0,3,true): return false
 	if not record(raw.player,["x","y","hp","max_hp","radius","facing","invulnerable","dash_time","dash_cd","dash_dx","dash_dy","cast"],["moving","fox_ready"]): return false
 	if raw.player.max_hp<=0 or not raw.room_bounds.grow(2).has_point(pos(raw.player)): return false

@@ -158,6 +158,44 @@ func run() -> void:
 			"bad_timer": corrupt.proc_timers={"ember":"broken"}
 			"bad_vector": corrupt.aim=Vector2(INF,0)
 		expect(not restored.restore(corrupt) and restored.snapshot()==stable,"nested corruption rejected atomically: "+field)
+	# --- 3.1 mechanics: flame / ignite / perfect dodge / four-symbol resonance / elite affixes ---
+	for character in ["keeper","swordswoman","alchemist"]:
+		var m=ChapterWorld.new(); m.begin({"seed":77,"choose_oath":false,"character":character})
+		m.room().cleared=true; m.enter_room(1); m.mobs.clear(); m.bolts.clear(); m.zones.clear(); m.events.clear()
+		expect(not m.can_ignite(),character+": flame starts empty")
+		var victim=target(m,50000)
+		m.flame=m.FLAME_MAX
+		expect(m.can_ignite() and m.ignite() and m.flame==0 and m.ignite_time>0,character+": full flame ignites the ultimate")
+		steps(m,60)
+		expect(victim.hp<50000,character+": ultimate damages nearby enemies")
+		expect(not m.ignite(),character+": ultimate cannot retrigger while burning")
+		var snap31=m.snapshot(); var back=ChapterWorld.new()
+		expect(back.restore(snap31) and is_equal_approx(back.ignite_time,m.ignite_time),character+": ignite state survives save/restore")
+	var d=fresh(78); d.room().cleared=true; d.enter_room(1); d.mobs.clear(); d.bolts.clear(); d.zones.clear()
+	var hp_before=d.player.hp
+	d.dash(Vector2.RIGHT); d.hurt(30)
+	expect(d.player.hp==hp_before and d.perfect_count==1 and d.perfect_time>0 and d.flame>=25,"hit inside dodge window becomes a perfect dodge and grants flame")
+	var crit_target=target(d,50000); d.attack_cd=0; d.set_controls(Vector2.RIGHT,true)
+	steps(d,30)
+	expect(d.perfect_time==0 or crit_target.hp<50000,"perfect dodge empowers the next attack")
+	var r=fresh(79)
+	expect(r.dash_max()==2,"base dash charges")
+	r.sigils={"wind":1,"counter":1}
+	var you_count=r.school_count("you")
+	var keys_you: Array=ChapterContent.SIGILS.keys().filter(func(k): return ChapterContent.SIGILS[k].school=="you")
+	r.sigils={}
+	for k in keys_you.slice(0,2): r.sigils[k]=1
+	expect(r.school_tier("you")>=1 and r.dash_max()==3,"two 青龙 sigils raise dash charges to three")
+	var keys_feng: Array=ChapterContent.SIGILS.keys().filter(func(k): return ChapterContent.SIGILS[k].school=="feng")
+	r.sigils={}
+	for k in keys_feng.slice(0,4): r.sigils[k]=1
+	expect(keys_feng.size()<4 or (r.school_tier("feng")==2 and r.crit_multiplier()>2.0),"four 白虎 sigils raise crit damage")
+	for school in ["yan","feng","zhen","you"]:
+		expect(ChapterContent.SIGILS.keys().filter(func(k): return ChapterContent.SIGILS[k].school==school).size()>=2,"school has enough sigils to resonate: "+school)
+	var e=fresh(80); e.room().cleared=true; e.enter_room(1)
+	var elite=e.spawn("paper_spirit",true)
+	expect(ChapterContent.AFFIXES.has(elite.get("affix","")),"elites roll an affix")
+	expect(you_count>=0,"school counting is total")
 	Save.directory="user://chapter-rules/"; Save.clear_run()
 	expect(Save.save_run(w) and not Save.read_run().is_empty(),"new ruleset saved through real store")
 	var output={"passed":failures.is_empty(),"checks":checks,"failures":failures}

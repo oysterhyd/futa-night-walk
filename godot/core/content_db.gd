@@ -15,11 +15,13 @@ const ELEMENTS = {
 	"thunder_mark": "thunder", "shock_ring": "thunder",
 	"frost_sand": "frost", "frost_ring": "frost", "lag_seal": "frost",
 	"poison_mist": "poison", "binding_hex": "poison",
+	"ignite_lamp": "fire", "ignite_furnace": "fire", "school_blast": "fire",
+	"ignite_blade": "spirit", "wind_trail": "spirit",
 }
 const COLORS = {
-	"fire": Color("ad3527"), "thunder": Color("8e692e"),
-	"frost": Color("396376"), "poison": Color("516849"),
-	"spirit": Color("243e54"), "enemy": Color("c23a2b"),
+	"fire": Color("d9472f"), "thunder": Color("c9962e"),
+	"frost": Color("3f93b3"), "poison": Color("5e9a3f"),
+	"spirit": Color("2f5d73"), "enemy": Color("d93a28"),
 }
 
 func _ready() -> void:
@@ -27,9 +29,6 @@ func _ready() -> void:
 	actor_material.shader = preload("res://shaders/actor.gdshader")
 	data = JSON.parse_string(FileAccess.get_file_as_string("res://assets/data/content.json"))
 	data["oaths"] = NATIVE.OATHS
-	data.camp.vigor.desc = "初始生命上限 +3 / 级"
-	data.camp.focus.desc = "所有伤害 +2% / 级"
-	data.camp.stride.desc = "角色移动速度 +1.5% / 级"
 	for achievement in data.achievements:
 		if achievement.id=="evolve": achievement.name="攻法初成"; achievement.desc="完成一次装备或技能改造。"
 	data.characters.alchemist.trait = "火毒持续伤害 +60%；过关额外回复 15 点生命。"
@@ -38,6 +37,23 @@ func _ready() -> void:
 	atlas_regions = JSON.parse_string(FileAccess.get_file_as_string("res://assets/data/atlas_regions.json"))
 	for raw in JSON.parse_string(FileAccess.get_file_as_string("res://assets/data/skills.json")):
 		skills[raw.id] = raw
+	for spec in [["ignite_lamp","百灯照夜"],["ignite_blade","一苇渡江"],["ignite_furnace","九转丹炉"],["school_blast","余烬炸裂"],["wind_trail","风刃"]]:
+		skills[spec[0]] = {"id":spec[0],"name":spec[1]}
+	for key in Lore.CHARACTERS:
+		var bio = Lore.CHARACTERS[key]
+		data.characters[key].title = bio.title
+		data.characters[key].story = bio.story
+	for key in Lore.CAMP:
+		data.camp[key].name = Lore.CAMP[key].name
+		data.camp[key].glyph = Lore.CAMP[key].glyph
+		data.camp[key].desc = Lore.CAMP[key].desc+" / 级"
+	data.contracts.none.name = "不立契"
+	data.contracts.none.desc = "按常规难度出发。"
+	data.contracts.swarm.desc = "敌人数量 +35%。灯烬 +25%。"
+	data.contracts.fragile.desc = "生命上限 -30%，伤害 +25%。灯烬 +35%。"
+	data.contracts.silence.desc = "整局无法回复生命。灯烬 +45%。"
+	var subtitles = ["满街灯笼，一盏也没人点。","江面只有月亮和狐火。","钟声早停了，有人还在敲。","塔里每一层都挂着灯。"]
+	for i in range(mini(4,data.biomes.size())): data.biomes[i].subtitle = subtitles[i]
 	body_font = load("res://assets/fonts/NightRoadNotes.ttf")
 	title_font = load("res://assets/fonts/NightRoadInscription.ttf")
 	title_font.fallbacks = [body_font]

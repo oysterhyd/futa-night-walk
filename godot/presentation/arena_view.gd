@@ -23,6 +23,33 @@ var prop_views: Array = []
 var shrine_view: Sprite2D
 var combat_batch: CombatBatch
 var interact_hint = "长按 E · 点灯"
+var hitstop = 0.0
+var hitstop_cd = 0.0
+var slow_time = 0.0
+var slow_scale = 1.0
+var flash = 0.0
+var desat = 0.0
+
+func tick(dt: float) -> void:
+	hitstop = maxf(0,hitstop-dt)
+	hitstop_cd = maxf(0,hitstop_cd-dt)
+	slow_time = maxf(0,slow_time-dt)
+	flash = maxf(0,flash-dt*2.2)
+	desat = move_toward(desat,1.0 if slow_time>0 and UI.motion() else 0.0,dt*6)
+
+func time_scale() -> float:
+	if hitstop > 0: return 0.0
+	if slow_time > 0 and UI.motion(): return slow_scale
+	return 1.0
+
+func add_hitstop(seconds: float, force: bool = false) -> void:
+	if hitstop_cd > 0 and not force: return
+	hitstop = maxf(hitstop,seconds)
+	hitstop_cd = seconds+0.14
+
+func add_slowmo(seconds: float, scale: float) -> void:
+	slow_time = maxf(slow_time,seconds)
+	slow_scale = scale
 
 func _ready() -> void:
 	presentation_rng.randomize()
@@ -146,7 +173,9 @@ func sync(dt: float) -> void:
 	effects = effects.filter(func(e): return e.life > 0)
 	for number in numbers:
 		number.life -= dt
-		number.y -= dt * 28
+		number.age = number.get("age",0.0)+dt
+		number.y -= dt * (60.0 if number.age < 0.15 else 18.0)
+		number.x += dt * number.get("vx",0.0)
 	numbers = numbers.filter(func(n): return n.life > 0)
 	shake = maxf(0, shake - dt * 20)
 	hurt = maxf(0, hurt - dt * 2.5)
@@ -163,8 +192,9 @@ func consume(event: Dictionary) -> void:
 	var color = Content.color_for(event.get("source", "spirit"))
 	match event.kind:
 		"hit":
-			if event.amount >= 1 and numbers.size() < 70:
-				numbers.append({"x": p.x + presentation_rng.randf_range(-10,10), "y": p.y - 45, "text": str(event.amount), "life": 0.65, "color": Color("ad3527") if event.critical else Color("183544"), "size": 25 if event.critical else 19})
+			if event.amount >= 1 and numbers.size() < 70 and Save.profile.settings.get("numbers",true):
+				numbers.append({"x": p.x + presentation_rng.randf_range(-14,14), "y": p.y - 48, "text": str(event.amount)+("!" if event.critical else ""), "life": 0.75 if event.critical else 0.6, "age": 0.0, "color": Color("ffc35a") if event.critical else Color("f3e9d2"), "size": 30 if event.critical else 20, "crit": event.critical, "vx": presentation_rng.randf_range(-18,18)})
+			if event.critical and event.amount >= 1: add_hitstop(0.035)
 			if event.amount >= 1:
 				Sound.play("hit", presentation_rng.randf_range(0.9,1.15))
 				add_effect("spark", p, 0.2, 20, color)
@@ -184,7 +214,7 @@ func consume(event: Dictionary) -> void:
 			effects.append(effect)
 		"reaction":
 			add_effect("ring", p, 0.6, event.radius, color)
-			numbers.append({"x": p.x - 24, "y": p.y - 70, "text": event.text, "life": 1.0, "color": color, "size": 24})
+			numbers.append({"x": p.x - 24, "y": p.y - 70, "text": event.text, "life": 1.0, "age": 0.0, "color": color.lightened(0.25), "size": 24, "crit": true, "vx": 0.0})
 			shake = maxf(shake, 2.5)
 		"hurt":
 			Sound.play("hurt")
@@ -312,5 +342,11 @@ func draw_front() -> void:
 					points.append(point)
 				vfx_front.draw_polyline(points,color,2.5,false)
 	for number in numbers:
-		var color = Color(number.color,minf(1,number.life*3))
-		vfx_front.draw_string(Content.body_font,Vector2(number.x,number.y),number.text,HORIZONTAL_ALIGNMENT_LEFT,-1,number.size,color)
+		var alpha = minf(1,number.life*4)
+		var age_value = number.get("age",0.3)
+		var pop = 1.0+(0.55 if number.get("crit",false) else 0.25)*maxf(0,1.0-age_value*7.0)
+		var font_size = int(number.size*pop)
+		var width = Content.title_font.get_string_size(number.text,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
+		var at = Vector2(number.x-width*0.5,number.y)
+		vfx_front.draw_string_outline(Content.title_font,at,number.text,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,6,Color(0.03,0.05,0.06,alpha*0.85))
+		vfx_front.draw_string(Content.title_font,at,number.text,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,Color(number.color,alpha))

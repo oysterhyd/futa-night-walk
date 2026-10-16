@@ -1,6 +1,6 @@
 # 燃灯夜行 · 夜渡
 
-Godot 4.7.2 原生工程，当前发行版本为 3.0.0，内容为四章连续冒险。玩家说明见 `../docs/CAMPAIGN_GUIDE.md`，验收证据见 `../docs/CAMPAIGN_QA.md`。`CHAPTER_ONE_GUIDE.md`、`CHAPTER_ONE_QA.md` 与 NATIVE 系列文档保留为旧版记录。
+Godot 4.7.2 原生工程，源码版本 3.1.0（改动见 `../docs/NIGHT_CROSSING_3_1.md`），最近发行版本为 3.0.0，内容为四章连续冒险。玩家说明见 `../docs/CAMPAIGN_GUIDE.md`，验收证据见 `../docs/CAMPAIGN_QA.md`。`CHAPTER_ONE_GUIDE.md`、`CHAPTER_ONE_QA.md` 与 NATIVE 系列文档保留为旧版记录。
 
 打开 `project.godot` 运行和编辑。游戏使用 GDScript、Godot 原生绘制、动作图集与音频，运行时不依赖 Python。
 

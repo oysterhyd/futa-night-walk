@@ -30,7 +30,7 @@ func capture(name: String) -> void:
 
 func run() -> void:
 	await get_tree().process_frame
-	Save.directory="user://chapter-visual/"; Save.profile=Save.defaults(); Save.profile.tutorial_seen=true; Save.profile.bosses=8; Save.profile.embers=220
+	Save.directory="user://chapter-visual/"; Save.profile=Save.defaults(); Save.profile.tutorial_seen=true; Save.profile.story_seen=true; Save.profile.settings.motion=false; Save.profile.bosses=8; Save.profile.embers=220
 	app=load("res://scenes/main.tscn").instantiate(); add_child(app)
 	app.set_process(false); app.set_physics_process(false)
 	await capture("menu")

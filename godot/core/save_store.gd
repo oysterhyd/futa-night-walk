@@ -3,12 +3,15 @@ extends Node
 var directory = "user://"
 var profile: Dictionary = {}
 var error = ""
+# Keys added after the first 3.x release; older profiles without them stay valid.
+const OPTIONAL_KEYS = ["records", "story_seen"]
+const OPTIONAL_SETTINGS = ["motion", "numbers"]
 
 func _ready() -> void:
 	load_profile()
 
 func defaults() -> Dictionary:
-	return {"version": 3, "embers": 0, "camp": {"vigor": 0, "focus": 0, "stride": 0, "fortune": 0}, "kills": 0, "bosses": 0, "victories": 0, "shrines": 0, "achievements": [], "history": [], "records":{}, "settled": [], "settings": {"music": 0.55, "sfx": 0.75, "shake": true, "particles": true, "fullscreen": false}, "tutorial_seen": false}
+	return {"version": 3, "embers": 0, "camp": {"vigor": 0, "focus": 0, "stride": 0, "fortune": 0}, "kills": 0, "bosses": 0, "victories": 0, "shrines": 0, "achievements": [], "history": [], "records":{}, "settled": [], "settings": {"music": 0.55, "sfx": 0.75, "shake": true, "particles": true, "fullscreen": false, "motion": true, "numbers": true}, "tutorial_seen": false, "story_seen": false}
 
 func read_json(name: String) -> Dictionary:
 	for suffix in ["", ".bak"]:
@@ -29,7 +32,7 @@ func read_json(name: String) -> Dictionary:
 func valid_profile(raw: Dictionary) -> bool:
 	if raw.get("version",0) != 3: return false
 	for key in defaults():
-		if key=="records" and not raw.has(key): continue
+		if key in OPTIONAL_KEYS and not raw.has(key): continue
 		if not raw.has(key): return false
 		var expected = defaults()[key]
 		if expected is int:
@@ -41,7 +44,9 @@ func valid_profile(raw: Dictionary) -> bool:
 	for key in raw.camp:
 		if not defaults().camp.has(key): return false
 	for key in defaults().settings:
-		if not raw.settings.has(key): return false
+		if not raw.settings.has(key):
+			if key in OPTIONAL_SETTINGS: continue
+			return false
 		var value = raw.settings[key]
 		if defaults().settings[key] is bool:
 			if not value is bool: return false
@@ -115,7 +120,7 @@ func load_profile() -> void:
 	for key in ["music", "sfx"]:
 		var value = profile.settings[key]
 		profile.settings[key] = clampf(float(value),0,1) if (value is float or value is int) and is_finite(float(value)) else defaults().settings[key]
-	for key in ["shake", "particles", "fullscreen"]:
+	for key in ["shake", "particles", "fullscreen", "motion", "numbers"]:
 		if not profile.settings[key] is bool: profile.settings[key] = defaults().settings[key]
 	for key in ["embers", "kills", "bosses", "victories", "shrines"]:
 		profile[key] = maxi(0,int(profile[key]))

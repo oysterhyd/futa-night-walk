@@ -1,6 +1,6 @@
 # 燃灯夜行 · 夜渡
 
-四章动作版 3.0.0。重构与特效改进见 [重构记录](docs/CAMPAIGN_REWORK.md)，验证范围见 [四章验收记录](docs/CAMPAIGN_QA.md)。
+源码版本 3.1.0「夜渡」：新界面、故事、燃灯与四象构筑，见 [3.1 改动记录](docs/NIGHT_CROSSING_3_1.md)。四章动作版 3.0.0 重构与特效改进见 [重构记录](docs/CAMPAIGN_REWORK.md)，验证范围见 [四章验收记录](docs/CAMPAIGN_QA.md)。
 
 长夜漫漫，百鬼横行。持辟邪古灯破夜诛邪，穿巷渡江，直登古塔之巅。
 
