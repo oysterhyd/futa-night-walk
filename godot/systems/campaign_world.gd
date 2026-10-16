@@ -151,7 +151,7 @@ func choose(index: int) -> bool:
 		stage+=1; sector_damage=0; boss_spawned=false; offer_kind=""; choices.clear(); phase="active"
 		rooms.clear(); room_id=0; shop_bought.clear(); proc_timers.clear()
 		chapter_start_kills=kills; chapter_start_time=time; clear_delay=0; environment_clock=0
-		attack_cd=0; attack_buffer=0; attack_windup=0; shadow_time=0; skill_cd=0; dash_charges=2; dash_recharge=0
+		attack_cd=0; attack_buffer=0; attack_windup=0; shadow_time=0; skill_cd=0; dash_charges=dash_max(); dash_recharge=0; ignite_time=0; dodge_window=0; perfect_time=0
 		_make_map(); event_id=rng.randi_range(0,3); enter_room(0)
 		return true
 	return super.choose(index)

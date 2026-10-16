@@ -19,22 +19,34 @@ const SKILLS = {
 	"frost": {"name":"霜环","glyph":"霜","desc":"释放 240 像素的霜环，造成 55 点伤害，冻结普通敌人 1 秒。冷却 8 秒。","cooldown":8.0,"source":"frost_ring","tags":["霜","控制"],"mods":["冰封：冻结延长至 1.8 秒，范围增加 20%。","裂冰：命中使敌人受到的伤害增加 25%，持续 2.5 秒。"]},
 }
 const SIGILS = {
-	"counter": {"name":"回身斩","glyph":"斩","desc":"每级：闪避后 2 秒内，首次普攻伤害 +30%，近战范围 +10%。","tags":["近战","闪避"]},
-	"fire": {"name":"朱砂火引","glyph":"火","desc":"每级：普攻附带 3 秒灼烧，每秒造成 4 点伤害。","tags":["火","普攻"]},
-	"toxin": {"name":"蚀骨毒","glyph":"毒","desc":"每级：剧毒持续伤害 +25%，剧毒持续时间 +0.5 秒。","tags":["毒"]},
-	"ember": {"name":"余烬回响","glyph":"烬","desc":"每级：普攻命中燃烧敌人时，技能冷却减少 0.2 秒。每 0.5 秒触发一次。","tags":["火","技能"]},
-	"execution": {"name":"断祟","glyph":"断","desc":"每级：对生命低于 35% 的敌人，伤害 +20%。","tags":["普攻"]},
-	"precision": {"name":"定心","glyph":"定","desc":"每级：暴击率 +8%。暴击造成 180% 伤害。","tags":["普攻"]},
-	"wind": {"name":"踏风","glyph":"风","desc":"每级：击杀后移速 +8%，持续 4 秒，可叠加三层。","tags":["击杀"]},
-	"ward": {"name":"护魂","glyph":"护","desc":"每级：击败减速或眩晕敌人时获得 5 点护盾。护盾上限 30 点。","tags":["控制"]},
-	"cleave": {"name":"破阵","glyph":"破","desc":"每级：每第四次普攻追加一次 160 像素范围斩击，造成 18 点伤害。","tags":["普攻","范围"]},
-	"echo": {"name":"符法余势","glyph":"势","desc":"每级：发动技能后的首次普攻伤害 +35%。","tags":["技能","普攻"]},
-	"leech": {"name":"回元","glyph":"元","desc":"每级：普攻命中精英或首领时回复 1 点生命。每秒触发一次。","tags":["普攻"]},
-	"reaction": {"name":"三才符","glyph":"才","desc":"每级：燃瘴、融霜、引雷的伤害 +25%。","tags":["火","毒","雷","霜"]},
-	"reach": {"name":"长锋","glyph":"锋","desc":"每级：近战攻击范围与普攻弹道射程 +8%。","tags":["普攻"]},
-	"pierce": {"name":"穿云","glyph":"穿","desc":"每级：投射普攻额外穿透一名敌人。剑气也可生效。","tags":["投射"]},
-	"frozen": {"name":"碎寒","glyph":"寒","desc":"每级：对减速或眩晕中的敌人，所有伤害 +12%。","tags":["控制"]},
-	"focus": {"name":"凝神","glyph":"凝","desc":"每级：主动技能伤害 +8%。","tags":["技能"]},
+	"counter": {"name":"回身斩","glyph":"斩","desc":"每级：闪避后 2 秒内，首次普攻伤害 +30%，近战范围 +10%。","tags":["近战","闪避"],"school":"feng"},
+	"fire": {"name":"朱砂火引","glyph":"火","desc":"每级：普攻附带 3 秒灼烧，每秒造成 4 点伤害。","tags":["火","普攻"],"school":"yan"},
+	"toxin": {"name":"蚀骨毒","glyph":"毒","desc":"每级：剧毒持续伤害 +25%，剧毒持续时间 +0.5 秒。","tags":["毒"],"school":"yan"},
+	"ember": {"name":"余烬回响","glyph":"烬","desc":"每级：普攻命中燃烧敌人时，技能冷却减少 0.2 秒。每 0.5 秒触发一次。","tags":["火","技能"],"school":"yan"},
+	"execution": {"name":"断祟","glyph":"断","desc":"每级：对生命低于 35% 的敌人，伤害 +20%。","tags":["普攻"],"school":"feng"},
+	"precision": {"name":"定心","glyph":"定","desc":"每级：暴击率 +8%。暴击造成 180% 伤害。","tags":["普攻"],"school":"feng"},
+	"wind": {"name":"踏风","glyph":"风","desc":"每级：击杀后移速 +8%，持续 4 秒，可叠加三层。","tags":["击杀"],"school":"you"},
+	"ward": {"name":"护魂","glyph":"护","desc":"每级：击败减速或眩晕敌人时获得 5 点护盾。护盾上限 30 点。","tags":["控制"],"school":"zhen"},
+	"cleave": {"name":"破阵","glyph":"破","desc":"每级：每第四次普攻追加一次 160 像素范围斩击，造成 18 点伤害。","tags":["普攻","范围"],"school":"you"},
+	"echo": {"name":"符法余势","glyph":"势","desc":"每级：发动技能后的首次普攻伤害 +35%。","tags":["技能","普攻"],"school":"zhen"},
+	"leech": {"name":"回元","glyph":"元","desc":"每级：普攻命中精英或首领时回复 1 点生命。每秒触发一次。","tags":["普攻"],"school":"you"},
+	"reaction": {"name":"三才符","glyph":"才","desc":"每级：燃瘴、融霜、引雷的伤害 +25%。","tags":["火","毒","雷","霜"],"school":"yan"},
+	"reach": {"name":"长锋","glyph":"锋","desc":"每级：近战攻击范围与普攻弹道射程 +8%。","tags":["普攻"],"school":"feng"},
+	"pierce": {"name":"穿云","glyph":"穿","desc":"每级：投射普攻额外穿透一名敌人。剑气也可生效。","tags":["投射"],"school":"you"},
+	"frozen": {"name":"碎寒","glyph":"寒","desc":"每级：对减速或眩晕中的敌人，所有伤害 +12%。","tags":["控制"],"school":"zhen"},
+	"focus": {"name":"凝神","glyph":"凝","desc":"每级：主动技能伤害 +8%。","tags":["技能"],"school":"zhen"},
+}
+const SCHOOLS = {
+	"yan": {"name":"朱雀","glyph":"雀","color":"c8432f","theme":"火与毒","tier1":"灼烧与剧毒伤害 +20%。","tier2":"带着灼烧或剧毒死去的敌人会炸开，波及周围。"},
+	"feng": {"name":"白虎","glyph":"虎","color":"d2a85a","theme":"暴击与近身","tier1":"暴击率 +10%。","tier2":"暴击伤害提升至 230%；暴击会加快闪避恢复。"},
+	"zhen": {"name":"玄武","glyph":"武","color":"6f9fb0","theme":"控制与技能","tier1":"技能冷却 -10%。","tier2":"释放技能时获得 12 点护盾与 8 点灯焰。"},
+	"you": {"name":"青龙","glyph":"龙","color":"7fb0a3","theme":"身法与连击","tier1":"闪避充能上限 +1。","tier2":"闪避路径上的敌人受到风刃伤害。"},
+}
+const AFFIXES = {
+	"swift": {"name":"迅捷","desc":"移动和出手都更快。"},
+	"armored": {"name":"铁甲","desc":"生命更厚。"},
+	"split": {"name":"分魂","desc":"死后分出三个纸人。"},
+	"ember": {"name":"余火","desc":"死后原地留下一圈火。"},
 }
 const RELICS = {
 	"fox_tooth": {"name":"灵狐尖牙","glyph":"牙","desc":"闪避后的首次普攻伤害 +50%。"},
@@ -80,14 +92,19 @@ static func damage_name(source: String) -> String:
 	if source=="poison_mist": return "毒针与毒雾"
 	if source=="pulse": return "镇魂印"
 	if source=="echo_mark": return "破阵斩击"
+	if source=="ignite_lamp": return "燃灯 · 百灯照夜"
+	if source=="ignite_blade": return "燃灯 · 一苇渡江"
+	if source=="ignite_furnace": return "燃灯 · 九转丹炉"
+	if source=="school_blast": return "朱雀 · 余烬炸裂"
+	if source=="wind_trail": return "青龙 · 风刃"
 	for key in GEAR:
 		if GEAR[key].source==source: return GEAR[key].name
 	for key in SKILLS:
 		if SKILLS[key].source==source: return SKILLS[key].name
 	return source.trim_prefix("reaction:")
 const EVENT_TEXT = [
-	{"name":"纸扎铺","text":"铺主把一张护身纸符推到桌边。要拿它，得用气血换。","choices":["最大生命 -15，获得一件遗物。","花费 20 铜钱，回复 35 点生命。","离开纸扎铺。"]},
-	{"name":"落锁的箱子","text":"箱上缠着一圈红线。砸开锁能取钱，也会惊动巷里的妖鬼。","choices":["取走 45 铜钱，下一间战斗额外出现一名精英。","拆下符纸，获得一次刷新。","不碰箱子。"]},
-	{"name":"残页符谱","text":"石桌上压着两页符谱。墨迹尚清，只能带走一页。","choices":["获得一次符印选择，下间战斗敌人伤害 +15%。","获得攻击强化，当前生命减少 15 点。","离开石桌。"]},
-	{"name":"旧灯换芯","text":"老灯匠坐在巷口。他能换掉焦黑灯芯，也能替兵器刻一道符。","choices":["花费 25 铜钱，回复全部生命。","花费 30 铜钱，装备升一阶。","继续赶路。"]},
+	{"name":"纸扎铺","text":"铺主把一张护身纸符推到桌边：「拿去。拿你一口血气换。」","choices":["最大生命 -15，获得一件遗物。","花费 20 铜钱，回复 35 点生命。","离开纸扎铺。"]},
+	{"name":"落锁的箱子","text":"箱子上缠着一圈红线。砸开能拿钱，动静也会招来东西。","choices":["取走 45 铜钱，下一间战斗额外出现一名精英。","拆下符纸，获得一次刷新。","不碰箱子。"]},
+	{"name":"残页符谱","text":"石桌上压着两页符谱，墨还没干。只能带走一页。","choices":["获得一次符印选择，下间战斗敌人伤害 +15%。","获得攻击强化，当前生命减少 15 点。","离开石桌。"]},
+	{"name":"旧灯换芯","text":"老灯匠蹲在巷口修灯：「换个芯，还是给你的兵器刻道符？」","choices":["花费 25 铜钱，回复全部生命。","花费 30 铜钱，装备升一阶。","继续赶路。"]},
 ]

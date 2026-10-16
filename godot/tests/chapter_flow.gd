@@ -46,11 +46,20 @@ func joy_button(button: int) -> void:
 
 func run() -> void:
 	await frames()
-	Save.directory="user://chapter-gui/"; Save.clear_run(); Save.profile=Save.defaults(); Save.profile.bosses=8
+	Save.directory="user://chapter-gui/"; Save.clear_run(); Save.profile=Save.defaults(); Save.profile.settings.motion=false; Save.profile.bosses=8
 	app=load("res://scenes/main.tscn").instantiate(); add_child(app)
+	app.arena.add_hitstop(0.1,true)
+	expect(app.arena.time_scale()==1.0,"reduced motion disables hit-stop")
+	app.arena.add_slowmo(0.5,0.3)
+	expect(app.arena.time_scale()==1.0,"reduced motion disables slow motion")
+	app.arena.tick(1.0)
 	await frames(); await key(KEY_ENTER)
 	expect(app.screen=="prepare","Enter opens character selection")
 	await click(app.page,"启程出发")
+	expect(app.story!=null,"first campaign start plays the prologue")
+	await key(KEY_ENTER)
+	expect(app.story.shown_lines==app.story.line_nodes.size(),"Enter reveals the current story text")
+	await capture("prologue"); await click(app.modal,"跳过")
 	expect(app.world is ChapterWorld and app.paused,"new first chapter opens tutorial")
 	await capture("tutorial"); await click(app.modal,"进入灯市")
 	expect(app.world.phase=="oath" and not app.paused,"tutorial closes into actual oath choices")
@@ -132,7 +141,12 @@ func run() -> void:
 	var final_boss=app.world.mobs.filter(func(m): return m.boss)[0]
 	app.world.hit(final_boss,1000000,"pulse")
 	var result_deadline=Time.get_ticks_msec()+4000
-	while app.screen!="result" and Time.get_ticks_msec()<result_deadline: await get_tree().process_frame
+	var ending_seen=false
+	while app.screen!="result" and Time.get_ticks_msec()<result_deadline:
+		if app.story!=null:
+			ending_seen=true; await capture("ending"); app.story.skip()
+		await get_tree().process_frame
+	expect(ending_seen,"campaign victory plays the ending before the result")
 	expect(app.screen=="result" and Save.profile.victories==1,"four chapter completion settles once")
 	await capture("result")
 	var report={"checks":checks,"failures":failures,"passed":failures.is_empty(),"scope":"Real Godot GUI render and synthetic native keyboard/mouse input; setup fixtures for card and boss captures."}
