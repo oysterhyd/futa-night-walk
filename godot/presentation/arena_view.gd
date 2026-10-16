@@ -29,6 +29,8 @@ var slow_time = 0.0
 var slow_scale = 1.0
 var flash = 0.0
 var desat = 0.0
+var fancy_zones = false
+var number_canvas: CanvasItem = null
 
 func tick(dt: float) -> void:
 	hitstop = maxf(0,hitstop-dt)
@@ -248,6 +250,7 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, obstacle.radius, Color(0,0,0,0.32))
 		draw_set_transform(Vector2.ZERO)
 	for zone in world.zones:
+		if fancy_zones and not zone.hostile: continue
 		var p = world.pos(zone)
 		var color = Content.color_for(zone.source)
 		if zone.warning>0 and not zone.hostile: color=Color("8e692e")
@@ -342,6 +345,9 @@ func draw_front() -> void:
 					if i > 0 and i < 6: point += (end-p).normalized().orthogonal()*sin(i*4+effect.life*50)*9
 					points.append(point)
 				vfx_front.draw_polyline(points,color,2.5,false)
+	if number_canvas == null: draw_numbers(vfx_front)
+
+func draw_numbers(canvas: CanvasItem) -> void:
 	for number in numbers:
 		var alpha = minf(1,number.life*4)
 		var age_value = number.get("age",0.3)
@@ -349,5 +355,5 @@ func draw_front() -> void:
 		var font_size = int(number.size*pop)
 		var width = Content.title_font.get_string_size(number.text,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
 		var at = Vector2(number.x-width*0.5,number.y)
-		vfx_front.draw_string_outline(Content.title_font,at,number.text,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,6,Color(0.03,0.05,0.06,alpha*0.85))
-		vfx_front.draw_string(Content.title_font,at,number.text,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,Color(number.color,alpha))
+		canvas.draw_string_outline(Content.title_font,at,number.text,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,6,Color(0.03,0.05,0.06,alpha*0.85))
+		canvas.draw_string(Content.title_font,at,number.text,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,Color(number.color,alpha))

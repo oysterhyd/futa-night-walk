@@ -1,6 +1,6 @@
 # 燃灯夜行 · 夜渡
 
-Windows 原生版 3.1.0，包含灯市旧巷、白狐渡、沉钟寺与无明塔四章连续冒险。解压后打开 `NightRoad.exe`，`NightRoad.pck` 须放在同一目录。运行不需要安装 Python 或 Godot，也不需要联网。
+Windows 原生版 3.1.1，包含灯市旧巷、白狐渡、沉钟寺与无明塔四章连续冒险。解压后打开 `NightRoad.exe`，`NightRoad.pck` 须放在同一目录。运行不需要安装 Python 或 Godot，也不需要联网。
 
 ## 操作
 

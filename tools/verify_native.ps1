@@ -18,6 +18,7 @@ $cases = @(
     @{ name='animation'; scene='chapter_animation'; graphical=$true; timeout=40; report='chapter-animation.json' },
     @{ name='visual'; scene='chapter_visual'; graphical=$true; timeout=60; report='chapter-visual.json' },
     @{ name='combat_quality'; scene='campaign_quality'; graphical=$true; timeout=90; report='campaign-quality.json' },
+    @{ name='vfx'; scene='vfx_regressions'; graphical=$true; timeout=30; report='vfx-regressions.json' },
     @{ name='performance'; scene='performance_audit'; graphical=$true; timeout=60; report='performance.json' }
 )
 foreach ($case in $cases) {

@@ -75,10 +75,11 @@ func retire() -> void:
 	retiring = true
 	animated.pause()
 	animated.set_instance_shader_parameter("flash",0.0)
-	var duration = 0.85 if entity.get("boss",false) else 0.42
+	var duration = 0.95 if entity.get("boss",false) else 0.55
 	var tween = create_tween().set_parallel()
+	# the burning-paper dissolve carries the exit; fade only the last stretch
 	tween.tween_method(func(value): animated.set_instance_shader_parameter("dissolve",value),0.0,1.0,duration)
-	tween.tween_property(self,"modulate:a",0.0,duration)
+	tween.tween_property(self,"modulate:a",0.0,duration*0.35).set_delay(duration*0.65)
 	tween.chain().tween_callback(queue_free)
 
 func _draw() -> void:
