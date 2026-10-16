@@ -18,3 +18,10 @@ tests/_scratch/*
 !tests/_scratch/.gitkeep
 save_data/*.json
 !save_data/.gitkeep
+
+# Godot import cache and local runtime reports
+tools/_sources/*
+!tools/_sources/README.md
+godot/.godot/
+godot/test-output/*
+!godot/test-output/.gdignore

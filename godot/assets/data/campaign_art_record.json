@@ -1,0 +1,41 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "images": [
+    {
+      "asset": "campaign-props-print.png",
+      "source": "exec-50737aa1-3a21-43f6-8a49-34fc832e705a.png",
+      "transparent_background": true,
+      "prompt": "Use case: stylized-concept. Asset type: transparent modular environment sprite atlas for a top-down action roguelike. Reference image is STYLE REFERENCE ONLY; generate new distinct objects. Chinese folk woodblock print and cut-paper game art: dark indigo #183544, warm ivory #e8dfc5, restrained vermilion #ad3527. Broad flat ink masses, hand-carved incision marks, crisp carved contours. No painterly shading, gradients, glow, UI, letters or characters. EXACTLY twelve independent objects in a strict 4-column by 3-row grid, each centered inside its own equally sized cell, at least 40 pixels of empty space between objects, fully visible bases, consistent slightly elevated three-quarter camera. Row 1 river crossing: small wooden skiff with bundled reeds and rope; short broken bridge railing; two mooring posts with coiled rope; small stone fox shrine with red paper charm. Row 2 abandoned temple: massive hanging bronze bell on a compact timber stand; incense altar with red candles and incense sticks; broken carved stone sutra pillar; toppled carved stone guardian head and rubble. Row 3 haunted tower: tall caged vermilion lantern frame; narrow ornate sealed timber doorway with hanging paper charms; dark timber scroll rack with tied ivory scrolls; ritual drum on carved stand. Generous alpha0 space around EVERY object, no floor, no backdrop, no shadow, no overlap, no extra objects outside the twelve cells. Match reference print ink and silhouette readability at 180 pixel height.",
+      "selected": false
+    },
+    {
+      "asset": "river-floor-print.png",
+      "source": "exec-476b0229-2919-4820-830b-54675c56b5dd.png",
+      "transparent_background": false,
+      "prompt": "Use case: stylized-concept. Asset type: flat rectangular ground-only texture for a top-down Chinese folk action game. Chinese folk woodblock print and cut-paper game art: dark indigo #183544, warm ivory #e8dfc5, restrained vermilion #ad3527. Broad flat ink masses, hand-carved incision marks, crisp carved contours. No painterly shading, gradients, glow, UI, letters or characters. Landscape 3:2, opaque warm ivory, very low contrast. Cover the WHOLE frame with weathered wooden jetty planks in a clean overhead view. Wide pale boards run horizontally, subtle thin indigo-gray joins, restrained hand-carved wood grain and a few tiny worn nail marks. Keep nearly all ink detail very light, no dark shapes, no vignette, no focal point, no border, no water, no buildings, no objects, no characters, no symbols. This is unobtrusive walkable ground under moving characters, not a complete scene. All four edges are equally calm.",
+      "selected": true
+    },
+    {
+      "asset": "temple-floor-print.png",
+      "source": "exec-303afb7e-f79d-4f4d-9310-13cb40934302.png",
+      "transparent_background": false,
+      "prompt": "Use case: stylized-concept. Asset type: flat rectangular ground-only texture for a top-down Chinese folk action game. Chinese folk woodblock print and cut-paper game art: dark indigo #183544, warm ivory #e8dfc5, restrained vermilion #ad3527. Broad flat ink masses, hand-carved incision marks, crisp carved contours. No painterly shading, gradients, glow, UI, letters or characters. Landscape 3:2, opaque warm ivory, very low contrast. Cover the whole frame with broad worn square temple flagstones viewed directly overhead. Thin pale gray-indigo stone joins, sparse shallow carved cracks, very restrained dry moss in muted gray green at a few seams. Large calm uninterrupted pale surfaces dominate. No border, no vignette, no altar, no circular magic pattern, no objects, no stairs, no characters, no lettering. This is quiet walkable ground to stretch beneath enemies and red danger tells, not a complete scene.",
+      "selected": true
+    },
+    {
+      "asset": "tower-floor-print.png",
+      "source": "exec-e8682f93-4467-44f5-901f-5b1ad1e7f6fa.png",
+      "transparent_background": false,
+      "prompt": "Use case: stylized-concept. Asset type: flat rectangular ground-only texture for a top-down Chinese folk action game. Chinese folk woodblock print and cut-paper game art: dark indigo #183544, warm ivory #e8dfc5, restrained vermilion #ad3527. Broad flat ink masses, hand-carved incision marks, crisp carved contours. No painterly shading, gradients, glow, UI, letters or characters. Landscape 3:2, opaque pale ivory, very low contrast. Whole frame is an old Chinese tower's pale timber floor in direct overhead view, long narrow wooden boards with sparse diagonal structural joining seams, soft gray-indigo hand-cut grain and a few restrained faded vermilion ink scratches that do NOT form any recognizable writing or diagram. No center medallion, no border, no vignette, no dark beam, no furniture, no characters, no stairs. Preserve extremely clear combat readability everywhere, including edges. This is a surface texture, not a scene.",
+      "selected": true
+    },
+    {
+      "asset": "campaign-props-print-v2.png",
+      "source": "exec-445da1ad-f2c3-4464-ada4-e9680e0f29af.png",
+      "transparent_background": true,
+      "prompt": "Edit this game sprite atlas for production slicing. Preserve the twelve object identities, order, folk woodblock print style, indigo/ivory/vermilion inks and transparent background. CRITICAL CHANGE: create a rigorously EVEN 4 column by 3 row grid. Every object's COMPLETE bounding rectangle must fit within the central 70% of its equal-sized cell, leaving at least 15% fully transparent margin on every side of EVERY cell. Scale down the tall objects and spread rows farther apart. No silhouette may intrude into the neighboring cell's rectangle, including tassels, flames, finials, ropes or rubble. Row 1 column 3 must be ONE mooring post with a connected coil of rope at its base, rather than two separate posts. Remove isolated floating fragments; connect all ropes/tassels/rubble to their main object's silhouette. Keep all objects fully visible, intact, not cropped. EXACT row order: row1 boat, short rail, single mooring post, fox shrine; row2 bell stand, incense altar, sutra pillar, guardian head; row3 caged lantern, sealed doorway, scroll rack, ritual drum. Plain alpha0 background, no text or floor. Aim for a professional isolated environment sprite sheet rather than a crowded illustration.",
+      "reference": "campaign-props-print.png",
+      "selected": true
+    }
+  ]
+}

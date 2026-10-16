@@ -1,4 +1,0 @@
-interface:
-  display_name: "Pygame Roguelite Dev"
-  short_description: "Project conventions for this stage-based Python + pygame roguelite codebase."
-  default_prompt: "Use $pygame-roguelite-dev to implement or refactor features in this stage-based pygame roguelite project."

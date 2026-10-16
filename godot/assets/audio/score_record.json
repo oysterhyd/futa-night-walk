@@ -1,0 +1,58 @@
+[
+  {
+    "track": "night-print",
+    "seconds": 53.333,
+    "peak": 0.411,
+    "rms": 0.0436,
+    "loop_boundary_step": 0.0
+  },
+  {
+    "track": "battle-market",
+    "seconds": 40.0,
+    "peak": 0.5026,
+    "rms": 0.0581,
+    "loop_boundary_step": 0.0
+  },
+  {
+    "track": "battle-fox",
+    "seconds": 45.714,
+    "peak": 0.3747,
+    "rms": 0.0636,
+    "loop_boundary_step": 0.0
+  },
+  {
+    "track": "battle-temple",
+    "seconds": 43.636,
+    "peak": 0.5002,
+    "rms": 0.0533,
+    "loop_boundary_step": 0.0
+  },
+  {
+    "track": "battle-tower",
+    "seconds": 36.923,
+    "peak": 0.5284,
+    "rms": 0.0615,
+    "loop_boundary_step": 0.0
+  },
+  {
+    "track": "battle-boss",
+    "seconds": 34.286,
+    "peak": 0.5291,
+    "rms": 0.0658,
+    "loop_boundary_step": 0.0
+  },
+  {
+    "track": "ui-print",
+    "seconds": 0.18,
+    "peak": 0.4102,
+    "rms": 0.063,
+    "loop_boundary_step": null
+  },
+  {
+    "track": "pickup-print",
+    "seconds": 0.18,
+    "peak": 0.1596,
+    "rms": 0.0341,
+    "loop_boundary_step": null
+  }
+]

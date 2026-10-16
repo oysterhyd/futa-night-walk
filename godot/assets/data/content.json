@@ -1,0 +1,573 @@
+{
+  "characters": {
+    "keeper": {
+      "name": "提灯人",
+      "title": "灯在人在，破夜前行。",
+      "story": "野渡口的守灯铜灯，孤悬亮了整整十三载。今夜阴风骤起，唯有孤身直入古塔，换下将尽的灯芯。",
+      "sprite": 0,
+      "skill": "fire_talisman",
+      "hp": 110,
+      "speed": 230,
+      "damage": 1.0,
+      "trait": "拾取范围 +35%；释放镇魂时回复 8 点生命。",
+      "unlock": 0
+    },
+    "swordswoman": {
+      "name": "听雨",
+      "title": "雨落剑出，断祟分明。",
+      "story": "多年前在荒废古刹中遗落了佩剑。如今古寺已被妖雾侵蚀，她此行只为拔剑荡魔，取回旧兵。",
+      "sprite": 1,
+      "skill": "piercing_spike",
+      "hp": 85,
+      "speed": 265,
+      "damage": 1.12,
+      "trait": "初始移速与伤害更强；闪避冷却缩短 25%。",
+      "unlock": 1
+    },
+    "alchemist": {
+      "name": "葛翁",
+      "title": "炉火未熄，药性自见。",
+      "story": "深山老药铺的隐世药师。夜色愈浓，毒草的药性愈烈，他背着药篓与火炉，借百妖试药炼丹。",
+      "sprite": 2,
+      "skill": "poison_mist",
+      "hp": 125,
+      "speed": 205,
+      "damage": 1.0,
+      "trait": "灼烧与剧毒持续伤害 +60%；每关通关额外回复 15 点生命。",
+      "unlock": 3
+    }
+  },
+  "biomes": [
+    {
+      "name": "灯市旧巷",
+      "subtitle": "街市空寂，残灯摇曳妖影暗藏。",
+      "boss": "百目灯魁",
+      "boss_note": "注意灯火的落地预警，及时移出红色危险圈。",
+      "color": [
+        209,
+        143,
+        84
+      ],
+      "tint": [
+        18,
+        10,
+        3
+      ],
+      "enemies": [
+        "paper_spirit",
+        "lantern_wisp",
+        "archer"
+      ],
+      "chapter": "壹"
+    },
+    {
+      "name": "白狐渡",
+      "subtitle": "冷江倒影残月，岸边妖狐迷踪。",
+      "boss": "渡月狐姬",
+      "boss_note": "狐姬蓄力后会直线突刺，看清动作向两侧闪避。",
+      "color": [
+        127,
+        208,
+        190
+      ],
+      "tint": [
+        0,
+        17,
+        14
+      ],
+      "enemies": [
+        "paper_spirit",
+        "mist_fox",
+        "archer"
+      ],
+      "chapter": "贰"
+    },
+    {
+      "name": "沉钟寺",
+      "subtitle": "古刹深埋地底，沉闷钟声震人心魄。",
+      "boss": "沉钟守将",
+      "boss_note": "守将下砸后会扩散环形弹幕，提前留好闪避或后撤。",
+      "color": [
+        189,
+        174,
+        108
+      ],
+      "tint": [
+        12,
+        12,
+        0
+      ],
+      "enemies": [
+        "stone_guard",
+        "lantern_wisp",
+        "archer",
+        "mist_fox"
+      ],
+      "chapter": "叁"
+    },
+    {
+      "name": "无明塔",
+      "subtitle": "高塔刺破浓墨长夜，终局之战在前。",
+      "boss": "无明塔主",
+      "boss_note": "警惕大型符阵与全屏弹幕；半血狂暴后攻速与弹幕密度大幅上升。",
+      "color": [
+        172,
+        161,
+        206
+      ],
+      "tint": [
+        13,
+        0,
+        20
+      ],
+      "enemies": [
+        "stone_guard",
+        "archer",
+        "mist_fox",
+        "lantern_wisp"
+      ],
+      "chapter": "肆"
+    }
+  ],
+  "passives": {
+    "cinnabar": {
+      "name": "朱砂",
+      "desc": "所有符术伤害 +12%。",
+      "stat": "damage",
+      "value": 0.12,
+      "glyph": "砂",
+      "color": [
+        232,
+        133,
+        103
+      ]
+    },
+    "bell": {
+      "name": "风铃",
+      "desc": "符术冷却时间缩短 8%。",
+      "stat": "haste",
+      "value": 0.08,
+      "glyph": "铃",
+      "color": [
+        207,
+        192,
+        125
+      ]
+    },
+    "boots": {
+      "name": "草履",
+      "desc": "角色移动速度 +8%。",
+      "stat": "speed",
+      "value": 0.08,
+      "glyph": "履",
+      "color": [
+        164,
+        197,
+        164
+      ]
+    },
+    "jade": {
+      "name": "玉佩",
+      "desc": "生命上限 +18，并立即回复 18 点生命。",
+      "stat": "hp",
+      "value": 18,
+      "glyph": "玉",
+      "color": [
+        139,
+        219,
+        193
+      ]
+    },
+    "mirror": {
+      "name": "古镜",
+      "desc": "暴击率 +7%；暴击造成 200% 伤害。",
+      "stat": "crit",
+      "value": 0.07,
+      "glyph": "镜",
+      "color": [
+        169,
+        193,
+        221
+      ]
+    },
+    "magnet": {
+      "name": "引魂香",
+      "desc": "经验与掉落物拾取范围 +30%。",
+      "stat": "magnet",
+      "value": 0.3,
+      "glyph": "香",
+      "color": [
+        187,
+        156,
+        221
+      ]
+    },
+    "armor": {
+      "name": "铁衣",
+      "desc": "受到的伤害固定减少 2 点。",
+      "stat": "armor",
+      "value": 2,
+      "glyph": "衣",
+      "color": [
+        158,
+        174,
+        185
+      ]
+    },
+    "ember": {
+      "name": "灯芯",
+      "desc": "灼烧持续伤害 +30%。",
+      "stat": "burn",
+      "value": 0.3,
+      "glyph": "芯",
+      "color": [
+        233,
+        178,
+        94
+      ]
+    },
+    "scroll": {
+      "name": "残卷",
+      "desc": "击败敌人获得的经验 +15%。",
+      "stat": "xp",
+      "value": 0.15,
+      "glyph": "卷",
+      "color": [
+        217,
+        204,
+        166
+      ]
+    },
+    "dew": {
+      "name": "甘露",
+      "desc": "每 10 秒自动回复 2 点生命。",
+      "stat": "regen",
+      "value": 0.2,
+      "glyph": "露",
+      "color": [
+        132,
+        200,
+        204
+      ]
+    },
+    "seal": {
+      "name": "定风珠",
+      "desc": "闪避冷却时间缩短 12%。",
+      "stat": "dash",
+      "value": 0.12,
+      "glyph": "珠",
+      "color": [
+        171,
+        213,
+        210
+      ]
+    },
+    "ink": {
+      "name": "墨锭",
+      "desc": "镇魂伤害 +25%，蓄力所需击败数减少 10%。",
+      "stat": "pulse",
+      "value": 0.25,
+      "glyph": "墨",
+      "color": [
+        169,
+        178,
+        206
+      ]
+    }
+  },
+  "evolutions": {
+    "fire_talisman": {
+      "name": "三昧真火",
+      "passive": "ember",
+      "desc": "火符散射为三道强力烈焰，命中引发范围灼烧爆炸。"
+    },
+    "thunder_mark": {
+      "name": "九霄神雷",
+      "passive": "bell",
+      "desc": "雷印伤害大幅提升，额外连续跳跃四次电击敌群。"
+    },
+    "piercing_spike": {
+      "name": "万剑归宗",
+      "passive": "mirror",
+      "desc": "同时向前齐射五把飞剑，穿透整条直线路径上的所有敌人。"
+    },
+    "frost_sand": {
+      "name": "极寒冰砂",
+      "passive": "jade",
+      "desc": "冰砂向全方位扩散开来，大范围减速并冻结附近敌人。"
+    },
+    "poison_mist": {
+      "name": "碧落剧毒",
+      "passive": "cinnabar",
+      "desc": "毒雾生成持久剧毒水潭，持续重创并侵蚀踏入的敌群。"
+    },
+    "ward_shard": {
+      "name": "六甲玄护",
+      "passive": "armor",
+      "desc": "六枚玄符高速环绕护身，靠近触碰的敌人会被强力击退。"
+    }
+  },
+  "relics": {
+    "red_thread": {
+      "name": "赤绳同心",
+      "desc": "生命值低于 50% 时，所有伤害提升 35%。",
+      "glyph": "结"
+    },
+    "broken_coin": {
+      "name": "辟邪铜钱",
+      "desc": "每次拾取铜钱时，回复 1 点生命。",
+      "glyph": "钱"
+    },
+    "fox_tooth": {
+      "name": "灵狐尖牙",
+      "desc": "完成闪避后的下一次符术攻击伤害翻倍。",
+      "glyph": "牙"
+    },
+    "old_wick": {
+      "name": "不灭灯芯",
+      "desc": "每关首次受到致命伤害时保留 1 点生命，并获得 3 秒无敌护盾。",
+      "glyph": "芯"
+    },
+    "bamboo": {
+      "name": "养生竹简",
+      "desc": "角色每次升级时，额外回复 4 点生命。",
+      "glyph": "简"
+    },
+    "drum": {
+      "name": "醒魂木",
+      "desc": "镇魂击退距离大幅增加，并直接消除场上所有敌方弹幕。",
+      "glyph": "木"
+    },
+    "green_lamp": {
+      "name": "青铜古灯",
+      "desc": "激活祭灯所需引导时间减半，每次成功祭灯额外奖励 15 铜钱。",
+      "glyph": "盏"
+    },
+    "crow_feather": {
+      "name": "冥鸦黑羽",
+      "desc": "暴击率提升 12%。",
+      "glyph": "羽"
+    },
+    "wine": {
+      "name": "壮胆残酒",
+      "desc": "受到敌方伤害时，立即增加 5 点镇魂充能。",
+      "glyph": "酒"
+    },
+    "prayer": {
+      "name": "祈福灵签",
+      "desc": "每累计击败 30 个敌人，自动回复 5 点生命。",
+      "glyph": "签"
+    },
+    "silver": {
+      "name": "清音银铃",
+      "desc": "所有符术冷却时间缩短 12%。",
+      "glyph": "银"
+    },
+    "map": {
+      "name": "夜行舆图",
+      "desc": "拾取范围 +50%，角色移动速度 +8%。",
+      "glyph": "图"
+    }
+  },
+  "routes": [
+    {
+      "id": "tea",
+      "name": "古道茶摊",
+      "tag": "休整",
+      "text": "路边支起一口冒热气的大锅，老翁奉上一碗粗茶，洗去一路疲惫。",
+      "effect": "回复 40% 最大生命；获得 10 铜钱。",
+      "glyph": "茶"
+    },
+    {
+      "id": "relic",
+      "name": "荒废山庙",
+      "tag": "遗物",
+      "text": "石雕神像残破不堪，供桌上赫然留有一件前人遗落的灵物。",
+      "effect": "获得一件未持有的随机遗物。",
+      "glyph": "祠"
+    },
+    {
+      "id": "market",
+      "name": "夜市货郎",
+      "tag": "交易",
+      "text": "挑着红布扁担的行脚货郎驻足路旁，只要付清铜钱，包袱里尽是好物。",
+      "effect": "花费 35 铜钱，获得两次符术研习机会。",
+      "glyph": "市"
+    },
+    {
+      "id": "curse",
+      "name": "血契鬼市",
+      "tag": "险途",
+      "text": "阴暗深处伸出一只干瘪枯手，以自身气血为引，交换更凶煞的符力。",
+      "effect": "扣除 20% 当前生命；伤害提升 20%，并获得 35 铜钱。",
+      "glyph": "契"
+    },
+    {
+      "id": "study",
+      "name": "废亭残卷",
+      "tag": "修习",
+      "text": "避雨石亭石桌上静置一页泛黄符谱，就着灯光研读，顿觉茅塞顿开。",
+      "effect": "免费升级一次符术；下一关敌人生命 +15%。",
+      "glyph": "书"
+    },
+    {
+      "id": "spring",
+      "name": "山间清泉",
+      "tag": "洗尘",
+      "text": "清冽泉水涓涓流淌，掬一捧泉水饮下，顿时身心清明气血充盈。",
+      "effect": "回复 20 点生命；本局生命上限永久提升 12 点。",
+      "glyph": "泉"
+    }
+  ],
+  "camp": {
+    "vigor": {
+      "name": "固本元气",
+      "desc": "开局初始生命上限 +6 / 级",
+      "glyph": "灯"
+    },
+    "focus": {
+      "name": "法力凝练",
+      "desc": "符术基础伤害 +4% / 级",
+      "glyph": "砂"
+    },
+    "stride": {
+      "name": "神行捷径",
+      "desc": "角色移动速度 +3% / 级",
+      "glyph": "履"
+    },
+    "fortune": {
+      "name": "求签转运",
+      "desc": "每局开局额外获得 1 次符法刷新机会 / 级",
+      "glyph": "香"
+    }
+  },
+  "contracts": {
+    "none": {
+      "name": "标准夜行",
+      "desc": "不附加额外契约规则，按正常难度前行。",
+      "bonus": 1.0
+    },
+    "swarm": {
+      "name": "百鬼夜涌",
+      "desc": "敌群数量大幅增加 35%；通关灯烬奖励 +25%。",
+      "bonus": 1.25
+    },
+    "fragile": {
+      "name": "命如悬丝",
+      "desc": "生命上限减少 30%；全伤害增加 25%；灯烬奖励 +35%。",
+      "bonus": 1.35
+    },
+    "silence": {
+      "name": "枯泉禁疗",
+      "desc": "战斗与路途中完全无法回复生命；灯烬奖励 +45%。",
+      "bonus": 1.45
+    }
+  },
+  "achievements": [
+    {
+      "id": "first_boss",
+      "name": "破巷驱暗",
+      "desc": "击败第 1 关首领「百目灯魁」。",
+      "reward": 12
+    },
+    {
+      "id": "victory",
+      "name": "破晓诛邪",
+      "desc": "攻破四重险关，彻底斩杀塔主通关全剧。",
+      "reward": 35
+    },
+    {
+      "id": "kills500",
+      "name": "初露锋芒",
+      "desc": "累计消灭 500 个敌人。",
+      "reward": 18
+    },
+    {
+      "id": "kills2000",
+      "name": "千妖退避",
+      "desc": "累计消灭 2000 个敌人。",
+      "reward": 30
+    },
+    {
+      "id": "evolve",
+      "name": "道法大成",
+      "desc": "成功将任意符术进阶进化 1 次。",
+      "reward": 20
+    },
+    {
+      "id": "shrines",
+      "name": "神火永续",
+      "desc": "在战斗中累计成功激活 8 盏祭灯。",
+      "reward": 22
+    },
+    {
+      "id": "relics",
+      "name": "纳宝百宝",
+      "desc": "在单局夜行中同时集齐 4 件遗物。",
+      "reward": 18
+    },
+    {
+      "id": "nohit",
+      "name": "片叶不沾",
+      "desc": "不受到任何伤害通过任意整关。",
+      "reward": 25
+    },
+    {
+      "id": "ascend",
+      "name": "险峰勇进",
+      "desc": "在夜阶二或更高难度下通关夜行。",
+      "reward": 35
+    },
+    {
+      "id": "contract",
+      "name": "守约修真",
+      "desc": "携带任意难度契约完成一次完整夜行。",
+      "reward": 30
+    }
+  ],
+  "spell_text": {
+    "fire_talisman": "掷出飞火符，命中时造成直接伤害并附带持续灼烧。",
+    "thunder_mark": "降下迅雷落点，命中后在附近敌人之间传导电击并短暂麻痹。",
+    "piercing_spike": "射出强劲穿云飞剑，直线贯穿整排敌人，高阶将追加飞剑数量。",
+    "armor_breaker": "发射重型破甲长针，击中敌人造成强力击退与短暂僵直。",
+    "soul_arrow": "射出灵力飞矢，在空中自动大角度转向追踪最近目标。",
+    "frost_sand": "向前方扇形喷吐寒气冰砂，被击中的敌人移动大幅迟缓。",
+    "frost_ring": "向周身四面八方迸发冰刺，击退并减速贴脸近身的怪群。",
+    "lag_seal": "打出一枚定身法印，长久大幅削弱目标的移动速度。",
+    "poison_mist": "向敌群投掷毒雾符，落地形成剧毒泥潭，持续侵蚀踏入的敌群。",
+    "binding_hex": "在脚下布下符咒法阵，强力减速并持续伤害阵内所有妖物。",
+    "spirit_orb": "凝聚一颗缓慢漂浮的灵气珠，追踪靠近敌人后发生剧烈爆裂。",
+    "blast_pill": "抛掷暴烈火丸，在怪物密集处炸开并附加灼烧火海。",
+    "shock_ring": "身周瞬间激荡出环形惊雷，对近身敌人造成重创并向外击退。",
+    "starfall": "在敌人脚下引落星辰天火，短暂警示光环后轰然坠地爆炸。",
+    "echo_mark": "命中敌人后原地分化出余威法印，产生连续二次爆破。",
+    "ward_shard": "召唤旋转法符环绕周身飞舞，持续撕裂敢于贴近的敌人。",
+    "shadow_twin": "化出两道灵动影符在外围盘旋护体，更大范围屏障来袭敌影。",
+    "healing_mark": "体内每隔固定时间涌现生机回复生命，并向外震退近身怪物。",
+    "soul_lantern": "祭出青魂明灯扑向敌人，吞噬击溃目标的同时汲取生命回补己身。",
+    "soul_banner": "周期性朝全方位扫出一圈荡魔飞符，大范围强力推开四周怪群。"
+  },
+  "spell_glyphs": {
+    "fire_talisman": "火",
+    "thunder_mark": "雷",
+    "piercing_spike": "剑",
+    "armor_breaker": "针",
+    "soul_arrow": "矢",
+    "frost_sand": "砂",
+    "frost_ring": "霜",
+    "lag_seal": "迟",
+    "poison_mist": "毒",
+    "binding_hex": "缚",
+    "spirit_orb": "珠",
+    "blast_pill": "丸",
+    "shock_ring": "震",
+    "starfall": "星",
+    "echo_mark": "声",
+    "ward_shard": "护",
+    "shadow_twin": "影",
+    "healing_mark": "春",
+    "soul_lantern": "灯",
+    "soul_banner": "幡"
+  },
+  "schema_version": 1
+}

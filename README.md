@@ -1,151 +1,39 @@
-# 符塔夜行
+# 燃灯夜行 · 夜渡
 
-一个基于 `Python + pygame` 开发的轻量级东方奇幻肉鸽原型项目。  
-当前版本为 `v1`，已经具备可玩的多关卡成长、双模式菜单、20 技能池、自动战斗与本地排行榜等核心功能。
+四章动作版 3.0.0。重构与特效改进见 [重构记录](docs/CAMPAIGN_REWORK.md)，验证范围见 [四章验收记录](docs/CAMPAIGN_QA.md)。
 
-## 当前玩法
+长夜漫漫，百鬼横行。持辟邪古灯破夜诛邪，穿巷渡江，直登古塔之巅。
 
-- 模式
-  - `闯关模式`：共 4 关，完成第 4 关后通关结算
-  - `无限模式`：按关卡循环推进，记录本地排行榜
-- 关卡成长
-  - 每关从 20 个技能中分配 5 个本关可升级技能
-  - 每个技能最高 `Lv.3`
-  - 当本关 5 个技能全部升满后，进入下一关
-- 战斗节奏
-  - 玩家自动释放已解锁技能
-  - 击败敌人会掉落经验，靠近后会自动吸取
-  - 进入下一关时回复 20 点生命，并重置本关经验等级
+Godot 原生 Windows 版，包含灯市旧巷、白狐渡、沉钟寺、无明塔四章连续冒险。美术采用民俗木版画与剪纸，毛笔标题、文楷正文、路签按钮、册页面板与朱印组成统一界面。运行不需要安装 Python 或 Godot，也不需要联网。
 
-## v1 已有功能
+## 直接游玩
 
-- 菜单支持：
-  - `闯关模式`
-  - `无限模式`
-  - `说明`
-  - `窗口 / 全屏` 运行期切换
-- 说明界面支持：
-  - 操作说明
-  - 20 技能图鉴
-  - 技能详情滚轮查看
-- 战斗系统支持：
-  - 多关卡成长制
-  - 20 技能池与 4 组技能分配
-  - 技能三级成长
-  - 自动吸取掉落物
-  - 脚本波次 + 无限导演刷怪
-- UI 支持：
-  - 关卡说明弹窗
-  - 起始技能选择
-  - 三选一卡片升级面板
-  - 战斗内技能栏
-  - 无限模式本地排行榜
+从 [GitHub Releases 下载 3.0.0 四章 Windows 发行包](https://github.com/oysterhyd/futa-night-walk/releases/tag/v3.0.0)，解压后打开 `NightRoad.exe`。这是 Windows x86_64 免安装版，`NightRoad.exe` 与 `NightRoad.pck` 必须放在同一目录。发行包包含完整游戏、游玩说明与许可文件。
 
-## 技术栈
+包含三位夜行者、四章共五十六个房间、六件装备、六种主动技能、十六种符印、十六件遗物与十种奇遇。装备与技能各占一个槽位，可升阶并选择形态改造。构筑跨章保留，击败无明塔主后完成冒险。后三章有涨潮、落钟、封印爆发、专属奇遇和不同首领招式。提供标准闯关与每日挑战，保留营地、难度和契约。
 
-- Python 3.12
-- pygame 2.6
-- unittest
-- PyInstaller
+WASD / 方向键移动，鼠标瞄准，左键攻击（支持点按与长按），右键 / Q 发动唯一技能，空格闪避，E 交互与过门，祭灯时长按 E，B 查看行囊，Tab 查看地图，Esc 暂停，F11 全屏。手柄使用左摇杆移动、右摇杆瞄准、RT 攻击、RB 技能、LT 闪避、Y 交互、LB 地图。
 
-## 运行方式
+- [四章游玩说明](docs/CAMPAIGN_GUIDE.md)
+- [四章验收证据、性能与测试范围](docs/CAMPAIGN_QA.md)
+- [美术、字体和音乐素材记录](godot/assets/ART_RECORD.md)
 
-### 1. 安装依赖
+## 开发与发行
+
+用 Godot 4.7.2 打开 `godot/project.godot`。从仓库根目录用 PowerShell 7 执行：
 
 ```powershell
-pip install -r requirements.txt
+pwsh -NoProfile -File tools/verify_native.ps1
+pwsh -NoProfile -File tools/build_native_release.ps1 -Version 3.0.0
+pwsh -NoProfile -File tools/verify_native_release.ps1 -Version 3.0.0
 ```
 
-### 2. 启动游戏
+原生模拟与存档在 `godot/systems/`、`godot/core/`；角色、场景和批量特效在 `godot/presentation/`；刻版控件和手记在 `godot/ui/`；规则与真实 GUI 验证在 `godot/tests/`。报告写入 `godot/test-output/`。
 
-```powershell
-python main.py
-```
+Python 仅用于制作音频、测量图集和重做字体子集，开发依赖见 `requirements-dev.txt`。音效与章节音乐工具分别为 `tools/compose_native_cues.py`、`tools/compose_native_audio.py`，字体源保存在 `tools/_sources/`。
 
-## 测试与校验
+## 存档与许可
 
-运行单元测试：
+当前仓库源码为 Godot 原生版。构建产物通过 GitHub Releases 分发，导入缓存、测试输出和个人存档不提交到仓库。
 
-```powershell
-python -m unittest discover -s tests
-```
-
-运行编译检查：
-
-```powershell
-python -m compileall game tests main.py
-```
-
-## 打包
-
-项目已经包含打包产物和 `.spec` 文件。  
-如果需要重新打包，推荐先使用 `onedir` 模式：
-
-```powershell
-pyinstaller --noconfirm --clean --windowed --name 符塔夜行 --add-data "assets;assets" main.py
-```
-
-打包完成后可执行文件位于：
-
-```text
-dist/符塔夜行/符塔夜行.exe
-```
-
-## 目录结构
-
-```text
-game/
-├─ main.py
-├─ assets/
-│  ├─ data/
-│  └─ images/
-├─ game/
-│  ├─ content/
-│  ├─ core/
-│  ├─ entities/
-│  ├─ models/
-│  ├─ scenes/
-│  ├─ systems/
-│  └─ ui/
-├─ save_data/
-├─ tests/
-└─ requirements.txt
-```
-
-## 代码结构说明
-
-- `game/app.py`
-  管理 pygame 初始化、主循环、场景切换、窗口/全屏切换
-- `game/scenes/`
-  管理菜单、战斗、结算等流程
-- `game/systems/`
-  管理战斗、刷怪、成长和移动规则
-- `game/ui/`
-  管理 HUD、升级面板、技能图鉴等显示层
-- `assets/data/`
-  管理敌人、技能、波次等 JSON 数据
-- `save_data/`
-  管理无限模式排行榜
-
-## 当前状态
-
-这是一个偏“工程化原型”的 v1：
-
-- 已有完整的基础玩法循环
-- 已有数据驱动的技能和波次系统
-- 已有本地排行榜和打包能力
-- 美术资源仍以程序绘制和占位资源为主
-
-## 后续可继续扩展的方向
-
-- 接入正式 PNG 角色、敌人、技能图标和背景
-- 增加更多敌人类型和关卡机制
-- 增加音效与背景音乐
-- 增加更完整的结算页和数值统计
-- 增加 Boss、精英怪和特殊事件房
-
-## License
-
-本项目使用 [MIT License](LICENSE)。
-
-如果后续接入第三方图片、音效或字体资源，请单独确认这些素材的授权是否允许随仓库公开分发。
+设置页可导入已有旧版营地 `profile.json`。代码许可见 [LICENSE](LICENSE)，Godot 与字体许可随发行包提供。

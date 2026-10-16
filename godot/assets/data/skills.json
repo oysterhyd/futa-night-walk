@@ -1,0 +1,475 @@
+[
+  {
+    "id": "fire_talisman",
+    "name": "火符",
+    "description": "掷出飞火符，命中时造成直接伤害并附带持续灼烧。",
+    "group": "straight",
+    "cooldown": 0.42,
+    "damage": 11,
+    "projectile_speed": 400,
+    "behavior_type": "burn_bolt",
+    "duration": 1.25,
+    "burn_duration": 1.8,
+    "burn_damage": 5.0,
+    "level_scaling": {
+      "2": {
+        "damage": 14,
+        "burn_damage": 7.0
+      },
+      "3": {
+        "cooldown": 0.34,
+        "burn_duration": 2.4
+      }
+    }
+  },
+  {
+    "id": "thunder_mark",
+    "name": "雷印",
+    "description": "降下迅雷落点，命中后在附近敌人之间传导电击并短暂麻痹。",
+    "group": "straight",
+    "cooldown": 0.92,
+    "damage": 24,
+    "projectile_speed": 460,
+    "behavior_type": "chain_bolt",
+    "duration": 1.1,
+    "chain_targets": 1,
+    "chain_range": 135,
+    "chain_damage_ratio": 0.7,
+    "hit_stun": 0.15,
+    "level_scaling": {
+      "2": {
+        "damage": 30,
+        "chain_range": 160
+      },
+      "3": {
+        "chain_targets": 2,
+        "chain_damage_ratio": 0.8
+      }
+    }
+  },
+  {
+    "id": "piercing_spike",
+    "name": "穿云钉",
+    "description": "射出强劲穿云飞剑，直线贯穿整排敌人，高阶将追加飞剑数量。",
+    "group": "straight",
+    "cooldown": 0.55,
+    "damage": 18,
+    "projectile_speed": 520,
+    "behavior_type": "bolt",
+    "duration": 1.0,
+    "level_scaling": {
+      "2": {
+        "damage": 24,
+        "projectile_speed": 560
+      },
+      "3": {
+        "shots": 2,
+        "spread_angle": 6
+      }
+    }
+  },
+  {
+    "id": "armor_breaker",
+    "name": "裂甲针",
+    "description": "发射重型破甲长针，击中敌人造成强力击退与短暂僵直。",
+    "group": "straight",
+    "cooldown": 0.7,
+    "damage": 20,
+    "projectile_speed": 430,
+    "behavior_type": "bolt",
+    "duration": 1.15,
+    "hit_stun": 0.28,
+    "level_scaling": {
+      "2": {
+        "damage": 26,
+        "hit_stun": 0.4
+      },
+      "3": {
+        "chain_targets": 1,
+        "chain_range": 110,
+        "chain_damage_ratio": 0.5
+      }
+    }
+  },
+  {
+    "id": "soul_arrow",
+    "name": "追魂矢",
+    "description": "射出灵力飞矢，在空中自动大角度转向追踪最近目标。",
+    "group": "straight",
+    "cooldown": 0.72,
+    "damage": 14,
+    "projectile_speed": 310,
+    "behavior_type": "homing_blast",
+    "duration": 1.8,
+    "homing_strength": 260,
+    "explosion_radius": 0,
+    "level_scaling": {
+      "2": {
+        "damage": 18,
+        "homing_strength": 360
+      },
+      "3": {
+        "shots": 2,
+        "spread_angle": 10
+      }
+    }
+  },
+  {
+    "id": "frost_sand",
+    "name": "冰砂",
+    "description": "向前方扇形喷吐寒气冰砂，被击中的敌人移动大幅迟缓。",
+    "group": "control",
+    "cooldown": 1.05,
+    "damage": 9,
+    "projectile_speed": 320,
+    "behavior_type": "frost_spread",
+    "duration": 1.0,
+    "shots": 3,
+    "spread_angle": 18,
+    "slow_factor": 0.52,
+    "slow_duration": 1.7,
+    "level_scaling": {
+      "2": {
+        "shots": 4,
+        "damage": 11
+      },
+      "3": {
+        "slow_factor": 0.42,
+        "slow_duration": 2.3
+      }
+    }
+  },
+  {
+    "id": "frost_ring",
+    "name": "霜环",
+    "description": "向周身四面八方迸发冰刺，击退并减速贴脸近身的怪群。",
+    "group": "control",
+    "cooldown": 1.2,
+    "damage": 8,
+    "projectile_speed": 260,
+    "behavior_type": "spread",
+    "duration": 0.95,
+    "shots": 4,
+    "spread_angle": 90,
+    "slow_factor": 0.68,
+    "slow_duration": 1.3,
+    "level_scaling": {
+      "2": {
+        "shots": 5,
+        "damage": 10
+      },
+      "3": {
+        "slow_factor": 0.5,
+        "slow_duration": 1.9
+      }
+    }
+  },
+  {
+    "id": "lag_seal",
+    "name": "迟滞印",
+    "description": "打出一枚定身法印，长久大幅削弱目标的移动速度。",
+    "group": "control",
+    "cooldown": 0.9,
+    "damage": 12,
+    "projectile_speed": 350,
+    "behavior_type": "bolt",
+    "duration": 1.25,
+    "slow_factor": 0.38,
+    "slow_duration": 1.8,
+    "level_scaling": {
+      "2": {
+        "damage": 15,
+        "slow_duration": 2.2
+      },
+      "3": {
+        "hit_stun": 0.2,
+        "cooldown": 0.76
+      }
+    }
+  },
+  {
+    "id": "poison_mist",
+    "name": "毒雾符",
+    "description": "向敌群投掷毒雾符，落地形成剧毒泥潭，持续侵蚀踏入的敌群。",
+    "group": "control",
+    "cooldown": 0.98,
+    "damage": 10,
+    "projectile_speed": 260,
+    "behavior_type": "burn_bolt",
+    "duration": 1.8,
+    "burn_duration": 3.4,
+    "burn_damage": 3.8,
+    "level_scaling": {
+      "2": {
+        "burn_damage": 5.2,
+        "damage": 12
+      },
+      "3": {
+        "shots": 2,
+        "spread_angle": 12
+      }
+    }
+  },
+  {
+    "id": "binding_hex",
+    "name": "缚地咒",
+    "description": "在脚下布下符咒法阵，强力减速并持续伤害阵内所有妖物。",
+    "group": "control",
+    "cooldown": 1.15,
+    "damage": 11,
+    "projectile_speed": 260,
+    "behavior_type": "spread",
+    "duration": 0.9,
+    "shots": 2,
+    "spread_angle": 26,
+    "slow_factor": 0.48,
+    "slow_duration": 1.6,
+    "hit_stun": 0.14,
+    "level_scaling": {
+      "2": {
+        "shots": 3,
+        "damage": 13
+      },
+      "3": {
+        "hit_stun": 0.24,
+        "slow_duration": 2.1
+      }
+    }
+  },
+  {
+    "id": "spirit_orb",
+    "name": "灵珠",
+    "description": "凝聚一颗缓慢漂浮的灵气珠，追踪靠近敌人后发生剧烈爆裂。",
+    "group": "burst",
+    "cooldown": 0.86,
+    "damage": 15,
+    "projectile_speed": 250,
+    "behavior_type": "homing_blast",
+    "duration": 2.2,
+    "explosion_radius": 56,
+    "explosion_damage_ratio": 0.65,
+    "homing_strength": 260,
+    "level_scaling": {
+      "2": {
+        "damage": 18,
+        "explosion_radius": 68
+      },
+      "3": {
+        "explosion_damage_ratio": 0.82,
+        "homing_strength": 340
+      }
+    }
+  },
+  {
+    "id": "blast_pill",
+    "name": "爆焰丸",
+    "description": "抛掷暴烈火丸，在怪物密集处炸开并附加灼烧火海。",
+    "group": "burst",
+    "cooldown": 1.25,
+    "damage": 20,
+    "projectile_speed": 220,
+    "behavior_type": "homing_blast",
+    "duration": 1.7,
+    "explosion_radius": 78,
+    "explosion_damage_ratio": 0.72,
+    "homing_strength": 120,
+    "level_scaling": {
+      "2": {
+        "damage": 24,
+        "explosion_radius": 92
+      },
+      "3": {
+        "cooldown": 1.0,
+        "explosion_damage_ratio": 0.9
+      }
+    }
+  },
+  {
+    "id": "shock_ring",
+    "name": "震雷环",
+    "description": "身周瞬间激荡出环形惊雷，对近身敌人造成重创并向外击退。",
+    "group": "burst",
+    "cooldown": 1.08,
+    "damage": 17,
+    "projectile_speed": 360,
+    "behavior_type": "chain_bolt",
+    "duration": 1.2,
+    "chain_targets": 2,
+    "chain_range": 118,
+    "chain_damage_ratio": 0.55,
+    "level_scaling": {
+      "2": {
+        "damage": 21,
+        "chain_targets": 3
+      },
+      "3": {
+        "chain_range": 156,
+        "chain_damage_ratio": 0.72
+      }
+    }
+  },
+  {
+    "id": "starfall",
+    "name": "碎星陨",
+    "description": "在敌人脚下引落星辰天火，短暂警示光环后轰然坠地爆炸。",
+    "group": "burst",
+    "cooldown": 1.35,
+    "damage": 13,
+    "projectile_speed": 280,
+    "behavior_type": "spread",
+    "duration": 1.3,
+    "shots": 5,
+    "spread_angle": 14,
+    "level_scaling": {
+      "2": {
+        "damage": 16,
+        "shots": 6
+      },
+      "3": {
+        "cooldown": 1.08,
+        "shots": 7
+      }
+    }
+  },
+  {
+    "id": "echo_mark",
+    "name": "回声印",
+    "description": "命中敌人后原地分化出余威法印，产生连续二次爆破。",
+    "group": "burst",
+    "cooldown": 0.84,
+    "damage": 14,
+    "projectile_speed": 330,
+    "behavior_type": "homing_blast",
+    "duration": 1.6,
+    "explosion_radius": 44,
+    "explosion_damage_ratio": 0.55,
+    "homing_strength": 180,
+    "level_scaling": {
+      "2": {
+        "damage": 17,
+        "explosion_radius": 54
+      },
+      "3": {
+        "shots": 2,
+        "spread_angle": 8
+      }
+    }
+  },
+  {
+    "id": "ward_shard",
+    "name": "护身咒",
+    "description": "召唤旋转法符环绕周身飞舞，持续撕裂敢于贴近的敌人。",
+    "group": "defense",
+    "cooldown": 2.8,
+    "damage": 12,
+    "projectile_speed": 0,
+    "behavior_type": "orbit_guard",
+    "duration": 5.0,
+    "orbit_count": 2,
+    "orbit_radius": 46,
+    "orbit_speed": 4.4,
+    "level_scaling": {
+      "2": {
+        "damage": 15,
+        "orbit_radius": 52
+      },
+      "3": {
+        "orbit_count": 3,
+        "orbit_speed": 5.0
+      }
+    }
+  },
+  {
+    "id": "shadow_twin",
+    "name": "影分符",
+    "description": "化出两道灵动影符在外围盘旋护体，更大范围屏障来袭敌影。",
+    "group": "defense",
+    "cooldown": 3.1,
+    "damage": 10,
+    "projectile_speed": 0,
+    "behavior_type": "orbit_guard",
+    "duration": 5.6,
+    "orbit_count": 1,
+    "orbit_radius": 58,
+    "orbit_speed": 3.9,
+    "level_scaling": {
+      "2": {
+        "damage": 13,
+        "orbit_speed": 4.5
+      },
+      "3": {
+        "orbit_count": 2,
+        "orbit_radius": 64
+      }
+    }
+  },
+  {
+    "id": "healing_mark",
+    "name": "回春印",
+    "description": "体内每隔固定时间涌现生机回复生命，并向外震退近身怪物。",
+    "group": "defense",
+    "cooldown": 6.0,
+    "damage": 1,
+    "projectile_speed": 0,
+    "behavior_type": "healing_mark",
+    "duration": 0.1,
+    "healing_amount": 4,
+    "level_scaling": {
+      "2": {
+        "healing_amount": 6,
+        "cooldown": 5.2
+      },
+      "3": {
+        "healing_amount": 8,
+        "cooldown": 4.4
+      }
+    }
+  },
+  {
+    "id": "soul_lantern",
+    "name": "噬灵灯",
+    "description": "祭出青魂明灯扑向敌人，吞噬击溃目标的同时汲取生命回补己身。",
+    "group": "defense",
+    "cooldown": 1.1,
+    "damage": 12,
+    "projectile_speed": 220,
+    "behavior_type": "homing_blast",
+    "duration": 2.6,
+    "explosion_radius": 42,
+    "explosion_damage_ratio": 0.58,
+    "homing_strength": 280,
+    "level_scaling": {
+      "2": {
+        "damage": 15,
+        "homing_strength": 360
+      },
+      "3": {
+        "shots": 2,
+        "spread_angle": 18
+      }
+    }
+  },
+  {
+    "id": "soul_banner",
+    "name": "镇魂幡",
+    "description": "周期性朝全方位扫出一圈荡魔飞符，大范围强力推开四周怪群。",
+    "group": "defense",
+    "cooldown": 1.28,
+    "damage": 10,
+    "projectile_speed": 300,
+    "behavior_type": "spread",
+    "duration": 1.05,
+    "shots": 4,
+    "spread_angle": 22,
+    "level_scaling": {
+      "2": {
+        "shots": 5,
+        "damage": 12
+      },
+      "3": {
+        "cooldown": 1.0,
+        "shots": 6
+      }
+    }
+  }
+]

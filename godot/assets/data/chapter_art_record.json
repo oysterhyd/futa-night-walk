@@ -1,0 +1,25 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "generated_at": "2026-10-15",
+  "images": [
+    {
+      "asset": "market-props-print.png",
+      "source": "exec-9b4efdf7-b5fe-4eb4-83d6-f70690182dcb.png",
+      "transparent_background": true,
+      "prompt": "Use case: stylized-concept. Asset type: production environment sprite atlas for a Chinese folk-horror top-down action roguelite, titled NightRoad. Create ONE transparent PNG atlas laid out in exactly 4 columns by 3 rows with twelve evenly sized, separate cells and generous transparent padding. Reference image is stylistic reference only: retain dark indigo #183544, warm ivory #e8dfc5, vermilion #ad3527, hand-carved thick uneven outlines, flat woodblock-print ink masses, a few ivory incision marks, folk cut-paper silhouette. Camera: slightly elevated top-down three-quarter view like the reference game props, all objects aligned by their lowest point in each cell. Row 1: a closed timber market stall with vermilion cloth roof; a vegetable basket and wooden crates group; a broad ink-blue carved wall corner with a red paper talisman; an ornate closed courtyard double gate. Row 2: a tea vendor's table with kettle and two bowls; an old smith's bench with hammer, charcoal brazier and paper charms; a bronze incense shrine with three red candles; a sealed wooden treasure chest with vermilion ribbon. Row 3: an open courtyard gate; a short wooden barricade; a broken stone lantern; a ceremonial red lantern pillar used as a boss combat objective. No characters, no words, no UI, no glow, no gradients, no drop shadows, no floor or backdrop. Fully transparent outside each silhouette. Consistent print ink, readable at 140–220 pixels, pristine separation so game can cut each grid cell as a sprite."
+    },
+    {
+      "asset": "market-floor-print.png",
+      "source": "exec-7cec56a2-e383-4657-8907-b19752968821.png",
+      "transparent_background": false,
+      "prompt": "Use case: stylized-concept. Asset type: production top-down ground texture for a Chinese folk woodblock-print action roguelite. Primary request: a quiet, seamless-feeling rectangular patch of old Chinese market courtyard paving, suitable for stretching or repeating under moving game characters. Strict top-down orthographic view, no perspective, no walls, no horizon. Warm ivory paper #e8dfc5 dominates 95% of the image. Widely spaced, gently irregular pale indigo-gray stone slab joints, very low contrast woodblock carved wear, sparse small dust flecks, two or three tiny faded vermilion leaf fragments. The texture must remain nearly blank and calm to keep dark indigo and vermilion characters very readable. Hand-pressed ink texture, subtle natural paper grain, a few thin chipped stone corners. No focal point, no circle, no ritual seal, no emblem, no letters, no symbols, no characters, no scenery, no colored gradients, no cast shadows. Fill the whole image to its edges with this continuous pavement. Do not draw a border or frame. Low contrast professional indie game floor asset."
+    },
+    {
+      "asset": "chapter-icons-print.png",
+      "source": "exec-db043d0b-2413-4847-95e7-c7a0d8a96055.png",
+      "transparent_background": true,
+      "prompt": "Use case: stylized-concept. Asset type: a production transparent icon atlas for a Chinese folk woodblock-print action roguelite. Create ONE atlas in exactly four columns by three rows, twelve square cells, each isolated icon centered with generous transparent margins, no parts of any icon touching neighboring cells. Reference image is a style reference only. Three main inks: dark indigo #183544, warm ivory #e8dfc5, vermilion #ad3527, with restrained frost-blue or herbal-green only where specified. Bold carved silhouettes, flat paper-cut shapes, sparse deliberate ivory incisions, professional game readability at 48px. Cell order LEFT TO RIGHT, TOP TO BOTTOM: 1) vermilion talisman packet in a small carved wood box, 2) a broad Chinese peachwood sword with red cord, 3) a green poison needle tube with three needles, 4) a heavy peachwood demon-slaying hammer with a red cord, 5) a bronze lightning-patterned circular throwing wheel, 6) a blue-ink frost sand ceramic jar, 7) a circular ivory paper medallion showing a dark bronze exorcism hand seal, 8) a circular paper medallion with green mist and a talisman, 9) a circular paper medallion with two indigo warrior silhouettes connected by a red thread, 10) a circular paper medallion with coiled roots forming a binding magic knot, 11) a circular paper medallion with a vermilion flame-pill burst, 12) a circular paper medallion with a blue ice crystal ring. Medallion backgrounds are opaque ivory INSIDE the circular silhouette; everything outside every icon must be fully transparent. No letters, numbers, words, UI frames, watermarks, gradients, photorealism, glow, shadows or floor. All objects complete and uncropped. Keep each weapon's grip and blade easy to distinguish."
+    }
+  ],
+  "atlas_note": "Coordinates measured from transparent connected components; image pixels unchanged."
+}
