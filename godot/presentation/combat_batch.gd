@@ -11,6 +11,7 @@ var health_fg: MultiMeshInstance2D
 var art_batches: Dictionary = {}
 var art_counts: Dictionary = {}
 var drop_batches: Dictionary = {}
+var skip_friendly = false
 
 func _ready() -> void:
 	for spec in [["hostile",Vector2(30,30),14],["danger_arrow",Vector2(48,24),13],["danger_trail",Vector2(46,20),15],["blade",Vector2(36,9),1],["talisman",Vector2(20,14),2],["trail",Vector2(42,12),3],["pearl",Vector2(23,23),6],["lantern",Vector2(24,29),7],["frost",Vector2(23,23),8],["echo",Vector2(25,25),9],["pill",Vector2(22,22),10],["arrow",Vector2(34,12),11],["thunder",Vector2(23,23),12]]:
@@ -98,6 +99,7 @@ func sync(world: RunWorld, effects: Array, particles: bool, visual_age: float=0.
 	var counts = {}
 	for key in batches: counts[key] = 0
 	for bolt in world.bolts:
+		if skip_friendly and not bolt.hostile: continue
 		var p = world.pos(bolt)
 		var direction = Vector2(bolt.vx,bolt.vy).normalized()
 		var color = Content.color_for(bolt.source)

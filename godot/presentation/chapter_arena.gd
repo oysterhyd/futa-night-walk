@@ -18,6 +18,12 @@ var light_list := PackedVector4Array()
 var light_tints := PackedVector4Array()
 var light_origin = Vector2.ZERO
 var night_level = 0.6
+var vfx: CombatVfx
+var vfx_ground: VfxLayer
+var vfx_air: VfxLayer
+var air_layer: CanvasLayer
+var number_view: Node2D
+const LEGACY_EFFECTS = ["spark","death","dash","pulse","ring","chain","slash","skill","attack_art","impact","detonation","enemy_attack","ignite","perfect","flame_ready","ignite_chain","wind_trail","clear"]
 const C = preload("res://content/chapter_content.gd")
 
 func _ready() -> void:
@@ -36,9 +42,31 @@ func _ready() -> void:
 	camera=Camera2D.new()
 	camera.position=Vector2(800,450)
 	add_child(camera)
+	fancy_zones=true
+	combat_batch.skip_friendly=true
+	vfx_ground=VfxLayer.new()
+	vfx_ground.z_index=2
+	add_child(vfx_ground)
+	# Effects draw above the night grade so fire and blades keep their colour.
+	air_layer=CanvasLayer.new()
+	air_layer.layer=3
+	air_layer.follow_viewport_enabled=true
+	add_child(air_layer)
+	vfx_air=VfxLayer.new()
+	air_layer.add_child(vfx_air)
+	number_view=Node2D.new()
+	number_view.draw.connect(func(): draw_numbers(number_view))
+	air_layer.add_child(number_view)
+	number_canvas=number_view
+	vfx=CombatVfx.new(self,vfx_ground,vfx_air)
 
 func _process(_dt: float) -> void:
 	if camera: camera.enabled=visible
+	if air_layer: air_layer.visible=is_visible_in_tree() and world is ChapterWorld
+
+func add_effect(kind: String, p: Vector2, life: float, radius: float, color: Color) -> void:
+	if world is ChapterWorld and kind in LEGACY_EFFECTS: return
+	super.add_effect(kind,p,life,radius,color)
 
 func prop_texture(index: int, atlas_name: String="market") -> AtlasTexture:
 	var key=atlas_name+str(index)
@@ -62,7 +90,7 @@ func sync(dt: float) -> void:
 	if not world is ChapterWorld: super.sync(dt); return
 	var changed=room_shown!=world.room_id or floor_stage!=world.stage
 	if room_shown!=world.room_id:
-		effects.clear(); numbers.clear()
+		effects.clear(); numbers.clear(); vfx.clear()
 		# Dissolves belong to the room where an enemy died.
 		for view in actors.get_children():
 			if view is ActorView and view!=player_view: view.queue_free()
@@ -102,6 +130,8 @@ func sync(dt: float) -> void:
 		ghosts.append({"x":chapter.player.x,"y":chapter.player.y,"life":0.3,"tex":anim.sprite_frames.get_frame_texture(anim.animation,anim.frame),"offset":anim.offset,"scale":anim.scale,"flip":anim.flip_h})
 	for ghost in ghosts: ghost.life-=dt
 	ghosts=ghosts.filter(func(g): return g.life>0)
+	vfx.update(dt)
+	number_view.queue_redraw()
 	_update_lights(chapter,dt)
 	actors.modulate.a=clampf(1-transition*2,0.3,1)
 	var live: Dictionary={}
@@ -140,6 +170,12 @@ func _update_lights(chapter: ChapterWorld, dt: float) -> void:
 	var radius=290.0+130.0*chapter.flame/chapter.FLAME_MAX
 	if chapter.ignite_time>0: radius=470.0
 	_light(p+Vector2(0,-30),radius*flicker,1.0 if chapter.ignite_time<=0 else 1.35,lamp)
+	vfx.add_lights(_light)
+	var friendly=0
+	for bolt in chapter.bolts:
+		if friendly>=6: break
+		if not bolt.get("hostile",false) and bolt.source in ["fire_talisman","thunder_mark","piercing_spike","frost_sand"]:
+			_light(chapter.pos(bolt),110,0.5,Content.color_for(bolt.source).lightened(0.4)); friendly+=1
 	for zone in chapter.zones:
 		if zone.hostile and zone.warning>0: _light(chapter.pos(zone),zone.radius*1.5,0.75,danger)
 	for mob in chapter.mobs:
@@ -154,9 +190,9 @@ func _update_lights(chapter: ChapterWorld, dt: float) -> void:
 	for zone in chapter.zones:
 		if not zone.hostile and zone.warning<=0: _light(chapter.pos(zone),zone.radius*1.4,0.5,Content.color_for(zone.source).lightened(0.3))
 	for effect in effects:
-		if effect.kind in ["pulse","ignite","detonation","enemy_blast","flame_ready"]:
+		if effect.kind in ["enemy_blast"]:
 			var t=1.0-effect.life/effect.max_life
-			_light(Vector2(effect.x,effect.y),effect.get("radius",200.0)*(0.6+t*0.8),(1.0-t)*1.2,lamp if effect.kind!="enemy_blast" else danger)
+			_light(Vector2(effect.x,effect.y),effect.get("radius",200.0)*(0.6+t*0.8),(1.0-t)*1.2,danger)
 	if not chapter.shrine.is_empty(): _light(chapter.pos(chapter.shrine)+Vector2(0,-30),230,0.75+0.4*chapter.shrine.get("progress",0.0),lamp)
 	for door in chapter.doors():
 		if door.open: _light(door.position+Vector2(0,-40),170,0.5,lamp)
@@ -183,30 +219,26 @@ func _camera_target(chapter: ChapterWorld) -> Vector2:
 	return Vector2(center.x+clampf(p.x-center.x,-maxf(0,extent.x),maxf(0,extent.x)),vertical)
 
 func consume(event: Dictionary) -> void:
+	if not world is ChapterWorld: super.consume(event); return
+	vfx.consume(event)
 	var at=Vector2(event.get("x",800),event.get("y",450))
 	match event.kind:
 		"perfect_dodge":
 			add_slowmo(0.5,0.3); add_hitstop(0.05,true)
 			Sound.play("bell",1.6)
-			add_effect("perfect",at,0.5,90,UI.JADE)
 			if numbers.size()<70: numbers.append({"x":at.x,"y":at.y-80,"text":"识破","life":0.9,"age":0.0,"color":Color("bfe8df"),"size":30,"crit":true,"vx":0.0})
 			return
 		"ignite":
 			add_hitstop(0.09,true); add_slowmo(0.35,0.45); flash=1.0; shake=maxf(shake,12.0)
 			Sound.play("flame",0.8); Sound.play("boss",1.3)
-			add_effect("ignite",at,0.9,event.get("radius",360.0),UI.AMBER)
 			if numbers.size()<70: numbers.append({"x":at.x,"y":at.y-110,"text":Lore.CHARACTERS.get(event.get("character","keeper"),{}).get("ultimate","燃灯"),"life":1.3,"age":0.0,"color":Color("ffd27a"),"size":40,"crit":true,"vx":0.0})
 			return
 		"ignite_chain":
-			if effects.size()<180: effects.append({"kind":"ignite_chain","x":at.x,"y":at.y,"tx":event.tx,"ty":event.ty,"life":0.4,"max_life":0.4,"radius":0,"color":UI.AMBER})
-			Sound.play("swing",1.25)
+			Sound.play("swing",1.25); add_hitstop(0.03,true)
 			return
-		"wind_trail":
-			if effects.size()<180: effects.append({"kind":"wind_trail","x":at.x,"y":at.y,"tx":event.tx,"ty":event.ty,"life":0.45,"max_life":0.45,"radius":0,"color":UI.JADE})
-			return
+		"wind_trail": return
 		"flame_ready":
 			Sound.play("upgrade",1.3)
-			add_effect("flame_ready",at,0.7,140,UI.AMBER)
 			return
 		"death":
 			if event.get("boss",false): add_hitstop(0.16,true); add_slowmo(0.9,0.25); flash=0.5
@@ -215,28 +247,23 @@ func consume(event: Dictionary) -> void:
 		Sound.play({"seal":"cast","sword":"swing","hammer":"hammer","needle":"needle","wheel":"wheel","sand":"sand"}[world.gear],presentation_rng.randf_range(0.95,1.05))
 		return
 	if event.kind=="bell": Sound.play("bell"); return
-	if event.kind=="ring" and event.get("source")=="blast_pill":
+	if event.kind=="ring" and event.get("source") in ["blast_pill","ignite_furnace"]:
 		Sound.play("flame"); shake=maxf(shake,3.0)
-		if effects.size()<160:
-			var burst=event.duplicate(); burst.kind="detonation"; burst.life=0.55; burst.max_life=0.55; burst.color=Color("ad3527")
-			effects.append(burst)
+		return
 	if event.kind=="ring" and event.get("source")=="enemy" and effects.size()<160:
 		var burst=event.duplicate(); burst.kind="enemy_blast"; burst.life=0.65; burst.max_life=0.65; burst.color=Color("ad3527"); burst.stage=world.stage
 		effects.append(burst)
 		shake=maxf(shake,2.5 if world.stage==3 else 1.0)
-	if event.kind=="hit" and event.amount>=4 and effects.size()<160:
-		var impact=event.duplicate()
-		impact.kind="impact"; impact.life=0.20; impact.max_life=0.20; impact.color=Content.color_for(event.get("source","spirit"))
-		effects.append(impact)
+		return
 	if event.kind in ["slash","skill","clear","attack_art","enemy_attack","boss_art"]:
-		if event.kind=="attack_art" and event.gear in ["sword","hammer"]: return
-		var value=event.duplicate()
-		value["life"]=0.28 if event.kind in ["slash","attack_art","enemy_attack"] else 0.75
-		value["max_life"]=value.life
-		value["color"]=Content.color_for(event.get("source","spirit"))
-		if effects.size()<180: effects.append(value)
+		if event.kind=="boss_art" and effects.size()<180:
+			var value=event.duplicate()
+			value["life"]=0.75; value["max_life"]=0.75
+			value["color"]=Content.color_for(event.get("source","spirit"))
+			effects.append(value)
 		if event.kind=="slash": shake=maxf(shake,3 if event.heavy else 1.0)
-		if event.kind=="skill": Sound.play("ice" if event.skill=="frost" else "cast")
+		if event.kind=="attack_art" and event.get("critical",false): add_hitstop(0.03)
+		if event.kind=="skill": Sound.play("ice" if event.skill=="frost" else "cast"); add_hitstop(0.04,true)
 		if event.kind=="enemy_attack": Sound.play("bow" if event.get("enemy_kind")=="archer" else "swing",0.8)
 		if event.kind=="boss_art": Sound.play("bell" if event.stage==3 else ("flame" if event.stage==4 else "swing"),0.85)
 		if event.kind=="clear": Sound.play("upgrade")
@@ -301,13 +328,6 @@ func draw_front() -> void:
 		vfx_front.draw_texture_rect(ghost.tex,Rect2(ghost.offset*ghost.scale,size_value),false,Color(0.5,0.85,0.8,0.45*k))
 		vfx_front.draw_set_transform(Vector2.ZERO)
 	var p=chapter.pos(chapter.player)
-	if chapter.ignite_time>0:
-		var aura=130.0+8*sin(age*7)
-		vfx_front.draw_texture_rect(UI.glow(),Rect2(p-Vector2(aura,aura*0.7)*1.4,Vector2(aura,aura*0.7)*2.8),false,Color(1,0.7,0.35,0.25))
-		for i in range(10):
-			var a=age*1.8+i*TAU/10
-			var q=p+Vector2(cos(a)*aura,sin(a)*aura*0.55)
-			vfx_front.draw_colored_polygon(PackedVector2Array([q+Vector2(0,-14),q+Vector2(5,0),q+Vector2(0,6),q+Vector2(-5,0)]),Color(1,0.72,0.3,0.85))
 	for mob in chapter.mobs:
 		if mob.hp<=0 or not mob.get("elite",false) or not C.AFFIXES.has(mob.get("affix","")): continue
 		var tag=C.AFFIXES[mob.affix].name
@@ -319,8 +339,6 @@ func draw_front() -> void:
 	var cursor=p+chapter.aim*75
 	vfx_front.draw_arc(cursor,7,0,TAU,20,Color("183544"),1.5)
 	vfx_front.draw_line(p+chapter.aim*28,p+chapter.aim*58,Color(0.09,0.21,0.27,0.4),1)
-	if chapter.shield>0:
-		vfx_front.draw_arc(p,29,-PI,0,36,Color("396376"),2.5)
 	for mob in chapter.mobs:
 		if mob.hp<=0 or mob.charging<=0: continue
 		var direction=Vector2(mob.dx,mob.dy).normalized()
@@ -336,65 +354,8 @@ func draw_front() -> void:
 			var point=p+chapter.aim.orthogonal()*(i-(count-1)*0.5)*70-chapter.aim*35
 			vfx_front.draw_texture_rect(frame,Rect2(point-Vector2(35,83),Vector2(70,88)),false,Color(0.15,0.25,0.32,0.48))
 	for effect in effects:
-		if effect.kind in ["slash","skill","attack_art","impact","enemy_attack","enemy_blast","detonation","boss_art"]:
-			CombatIllustration.draw(vfx_front,effect)
-			continue
-		if effect.kind in ["ignite","perfect","flame_ready","ignite_chain","wind_trail"]:
-			_draw_special(effect)
-			continue
-		if effect.kind!="clear": continue
-		var point=Vector2(effect.x,effect.y)
-		var t=1.0-effect.life/effect.max_life
-		var color=Color(effect.color,1.0-t)
-		if effect.kind=="slash":
-			var start=effect.angle-1.7+t*0.65
-			var radius=effect.radius*(0.6+t*0.4)
-			vfx_front.draw_arc(point,radius,start,start+2.8,32,color,8 if effect.heavy else 4)
-			vfx_front.draw_arc(point,radius*0.85,start+0.15,start+2.5,32,Color(Color("e8dfc5"),1.0-t),2)
-			for i in range(7):
-				var direction=Vector2.from_angle(start+i*0.4)
-				vfx_front.draw_line(point+direction*radius*0.7,point+direction*radius,color,1.5)
-		else:
-			var radius=effect.get("radius",200.0)*(0.25+t*0.75)
-			vfx_front.draw_arc(point,radius,age*0.15,age*0.15+TAU,64,color,2)
-			for i in range(12):
-				var direction=Vector2.from_angle(i*TAU/12)
-				var side=direction.orthogonal()
-				var tip=point+direction*radius
-				vfx_front.draw_colored_polygon(PackedVector2Array([tip+direction*9,tip+side*4,tip-direction*9,tip-side*4]),color)
+		if effect.kind in ["enemy_blast","boss_art"]: CombatIllustration.draw(vfx_front,effect)
 	combat_batch.end_art()
-
-func _draw_special(effect: Dictionary) -> void:
-	var p=Vector2(effect.x,effect.y)
-	var t=1.0-effect.life/effect.max_life
-	match effect.kind:
-		"ignite":
-			var r=effect.radius*ease(t,0.35)
-			vfx_front.draw_texture_rect(UI.glow(),Rect2(p-Vector2(r,r)*1.2,Vector2(r,r)*2.4),false,Color(1,0.75,0.4,0.55*(1-t)))
-			vfx_front.draw_arc(p,r,0,TAU,96,Color(1,0.85,0.55,1-t),10*(1-t)+2,true)
-			vfx_front.draw_arc(p,r*0.82,0,TAU,96,Color(1,0.55,0.25,0.7*(1-t)),3,true)
-			for i in range(24):
-				var d=Vector2.from_angle(i*TAU/24+t*0.6)
-				vfx_front.draw_line(p+d*r*0.55,p+d*r*(1.0+0.12*sin(i*3.0)),Color(1,0.8,0.45,0.8*(1-t)),3,true)
-		"perfect":
-			var r=effect.radius*(1.0-0.6*t)
-			vfx_front.draw_arc(p,r,0,TAU,64,Color(0.6,0.95,0.88,1-t),3,true)
-			vfx_front.draw_arc(p,r*1.25,-t*2,-t*2+PI,48,Color(0.6,0.95,0.88,0.6*(1-t)),2,true)
-		"flame_ready":
-			var r=effect.radius*(0.3+t*0.9)
-			vfx_front.draw_arc(p+Vector2(0,-30),r,0,TAU,64,Color(1,0.78,0.4,1-t),4*(1-t)+1,true)
-		"ignite_chain":
-			var end=Vector2(effect.tx,effect.ty)
-			var width=14.0*(1-t)+2
-			vfx_front.draw_line(p,end,Color(1,0.7,0.35,0.55*(1-t)),width*1.8,true)
-			vfx_front.draw_line(p,end,Color(1,0.97,0.88,1-t),width*0.5,true)
-			vfx_front.draw_circle(end,18*(1-t)+4,Color(1,0.9,0.7,0.8*(1-t)))
-		"wind_trail":
-			var end=Vector2(effect.tx,effect.ty)
-			var side=(end-p).normalized().orthogonal()
-			for i in range(3):
-				var o=side*(i-1)*12
-				vfx_front.draw_line(p+o,end+o*0.4,Color(0.6,0.92,0.85,(0.7-i*0.15)*(1-t)),4-i,true)
 
 func _door_tag(text: String, baseline: Vector2, font_size: int, color: Color) -> void:
 	var width=Content.body_font.get_string_size(text,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x

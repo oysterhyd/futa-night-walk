@@ -48,7 +48,7 @@ func run() -> void:
 		w.pulse(); await capture("skill-"+key)
 		if key=="blast":
 			advance(0.40); await capture("skill-blast-impact")
-			if not app.arena.effects.any(func(e): return e.kind=="detonation"): failures.append("Actual timed detonation art missing")
+			if int(app.arena.vfx.fired.get("detonation",0))<1: failures.append("Actual timed detonation art missing")
 	Save.profile.settings.particles=false
 	reset_combat(); var archer=w.spawn("archer"); w.set_pos(archer,Vector2(1150,400)); w.hostile_fan(archer,3,240,false,Vector2.LEFT)
 	for i in range(12): w.update(1.0/60,Vector2.ZERO,false)

@@ -2,6 +2,19 @@
 
 原生版的主方向由用户明确选定：民俗木版画＋剪纸。使用墨蓝、纸白、朱红，以宽轮廓、平涂与刻痕保持战斗中的辨认度。
 
+## 战斗特效重做 · 墨韵光效
+
+战斗特效改由 `presentation/vfx_layer.gd`（批量粒子层）与 `presentation/combat_vfx.gd`（按事件编排）绘制，替换原先以线条、方块和圆形拼出的刀弧、施术与命中效果。每个效果按「墨层（正常混合，保证在纸白地面上可辨）＋光层（叠加混合）＋白热核心」三层组合，并附带碎屑、余烬、烟雾与地面残痕。所有粒子按混合方式合并为六个 `MultiMesh` 批次，绘制调用数与改动前持平。
+
+| 文件 | 内容 | 来源与许可 |
+| --- | --- | --- |
+| `assets/vfx/vfx-atlas.png` 格 0–37 | 光晕、星芒、爆闪、拖尾、电弧、烟团、火舌、枪焰、焦痕、尘土、旋涡、光环、放射光、爪痕、月牙等白色灰度贴图 | [Kenney Particle Pack](https://kenney.nl/assets/particle-pack)，CC0 1.0（公有领域，无需署名）；原图与 `License.txt` 由 `tools/make_vfx_textures.py` 从 `tools/_sources/kenney-particle-pack/` 读取并重新排版、转为白色＋透明度 |
+| `assets/vfx/vfx-atlas.png` 格 40–56 | 「敕令」「镇煞」符纸、桃花瓣、花朵、纸屑、冰晶、冰棱、雪花、锁链、墨点、墨溅、裂纹、气泡、干笔触、丹丸 | 项目原创，`tools/make_vfx_textures.py` 程序生成 |
+| `assets/vfx/vfx-seals.png` | 镇魂印八卦阵、缚地咒「缚」字阵、燃灯「燃」字日轮、霜环六角冰阵 | 项目原创，程序生成（「敕令」「镇煞」「缚」「燃」及卦名用马善政毛笔字体渲染进位图，OFL 1.1，许可见 `assets/fonts/MaShanZheng-OFL.txt`） |
+| `assets/vfx/vfx-noise.png` | 可平铺噪声，用于烟雾侵蚀、干笔触与刀光流纹 | 项目原创，程序生成 |
+
+着色器：`shaders/vfx_sprite_*.gdshader`（图集精灵＋噪声侵蚀＋白热核心）、`shaders/vfx_arc_*.gdshader`（程序化剑气月牙、干笔墨弧、冲击波、墨环、旋转符环、收束环）。怪物消散由 `shaders/actor.gdshader` 改为「纸张燃尽」式的柔和噪声边缘与余烬描边，不再出现方块像素。
+
 ## 四章动作版新增素材
 
 以下位图使用内置 `image_gen.imagegen` 生成或编辑，工程路径均为 `godot/assets/images/`：
