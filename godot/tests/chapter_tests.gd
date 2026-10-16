@@ -195,6 +195,9 @@ func run() -> void:
 	var e=fresh(80); e.room().cleared=true; e.enter_room(1)
 	var elite=e.spawn("paper_spirit",true)
 	expect(ChapterContent.AFFIXES.has(elite.get("affix","")),"elites roll an affix")
+	elite.affix="swift"; elite.spawn_age=1.0; elite.cooldown=1.0; elite.speed=0
+	e.update_mobs(0.1)
+	expect(is_equal_approx(elite.cooldown,0.855),"swift affix accelerates attack recovery as well as movement")
 	expect(you_count>=0,"school counting is total")
 	Save.directory="user://chapter-rules/"; Save.clear_run()
 	expect(Save.save_run(w) and not Save.read_run().is_empty(),"new ruleset saved through real store")

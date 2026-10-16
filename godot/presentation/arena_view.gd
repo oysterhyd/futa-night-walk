@@ -38,6 +38,7 @@ func tick(dt: float) -> void:
 	desat = move_toward(desat,1.0 if slow_time>0 and UI.motion() else 0.0,dt*6)
 
 func time_scale() -> float:
+	if not UI.motion(): return 1.0
 	if hitstop > 0: return 0.0
 	if slow_time > 0 and UI.motion(): return slow_scale
 	return 1.0

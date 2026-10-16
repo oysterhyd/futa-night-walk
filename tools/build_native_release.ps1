@@ -1,5 +1,5 @@
 param(
-    [ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version = '3.0.0',
+    [ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version = '3.1.0',
     [string]$EnginePath = "$env:LOCALAPPDATA/FutaGameTools/Godot-4.7.2-stable/Godot_v4.7.2-stable_win64_console.exe"
 )
 $ErrorActionPreference = 'Stop'

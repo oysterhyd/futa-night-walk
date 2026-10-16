@@ -634,7 +634,7 @@ func update_mobs(dt: float) -> void:
 		if mob.get("pillar",false): continue
 		var direction=(pos(player)-pos(mob)).normalized()
 		if absf(direction.x)>0.1: mob.facing=signf(direction.x)
-		mob.cooldown-=dt
+		mob.cooldown-=dt*(1.45 if mob.get("affix","")=="swift" else 1.0)
 		if mob.windup>0:
 			mob.windup=maxf(0,mob.windup-dt)
 			if mob.windup==0:
@@ -1027,6 +1027,7 @@ func snapshot() -> Dictionary:
 
 func valid_snapshot(raw: Dictionary) -> bool:
 	if raw.get("version")!=5 or raw.get("ruleset")!="chapter_one": return false
+	raw=raw.duplicate(true)
 	for key in NEW_DEFAULTS:
 		if not raw.has(key): raw[key]=NEW_DEFAULTS[key]
 	if not numeric(raw.flame,0,FLAME_MAX) or not numeric(raw.ignite_time,0,10) or not numeric(raw.dodge_window,0,1) or not numeric(raw.perfect_time,0,3) or not numeric(raw.perfect_count,0,100000,true): return false
@@ -1150,8 +1151,10 @@ func valid_snapshot(raw: Dictionary) -> bool:
 	return true
 
 func restore(raw: Dictionary) -> bool:
-	if not valid_snapshot(raw): return false
 	raw=raw.duplicate(true)
+	for key in NEW_DEFAULTS:
+		if not raw.has(key): raw[key]=NEW_DEFAULTS[key]
+	if not valid_snapshot(raw): return false
 	for key in SNAPSHOT_KEYS+CHAPTER_KEYS+["oath","pending_relics","relic_return_phase","pending_replacement"]: set(key,raw[key])
 	rng.seed=int(raw.rng_seed); rng.state=int(raw.rng_state)
 	attack_held=false; events.clear(); rebuild_index()

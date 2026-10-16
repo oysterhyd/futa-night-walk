@@ -1,4 +1,4 @@
-param([string]$Version = '3.0.0')
+param([string]$Version = '3.1.0')
 $ErrorActionPreference = 'Stop'
 $releaseRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $packageRoot = Join-Path $releaseRoot "dist/NightRoad-v$Version"
